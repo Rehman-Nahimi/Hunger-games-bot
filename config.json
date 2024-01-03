@@ -1,6 +1,7 @@
-
 {
-	"token": "MTE5MTc5MTkyMDIxNzg3MDM1Ng.GvO39b.v1269250IyXCugDQAYS75ufzHGqzJVJI3xIQlc",
-	"clientId": "1191791920217870356",
-	"guildId": "1191790914532815018"
+  "token": "MTE5MjEyNjc5NzQ0NjM4NTc4NA.GDK11_.5KiuVTq-dud57IjPAmyrMbQQg6G7jRKxzWd6fo", 
+  "prefix": "!",
+  "everyoneMention": false,
+  "copyright": "GiveawayBot™ v3 By ZeroSync",
+  "hostedBy": true
 }
