@@ -4,5 +4,17 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+			  "type": "node-terminal",
+			  "name": "Debug Current Js File (ts-node)",
+			  "request": "launch",
+			  "command": "npm run dev",
+			  "cwd": "${fileDirname}"
+			},	
+		  ]
+	}
 }
