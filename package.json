@@ -1,16 +1,35 @@
 {
-  "name": "config",
-  "version": "1.0.0",
+  "name": "GiveawayBot",
+  "version": "3.0.0",
+  "description": "Giveaway bot created with discord-giveaways package in discord.js v14",
   "main": "index.js",
   "scripts": {
     "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Zero",
+  "license": "CC-Zero",
+  "keywords": [
+    "discord",
+    "giveaways",
+    "giveaway",
+    "bot",
+    "discord.js",
+    "discordjs"
+  ],
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "discord-giveaways": "^6.0.1",
+    "discord.js": "^14.6.0",
+    "ms": "^3.0.0-canary.1",
+    "parsec": "^2.0.2"
   },
-  "devDependencies": {},
-  "description": ""
+  "engines": {
+    "node": "16.x"
+  },
+  "repository": {
+    "url": "https://github.com/ZeroDiscord/Giveaway"
+  },
+  "devDependencies": {
+    "node": "^16.9.1"
+  }
 }

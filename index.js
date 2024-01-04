@@ -1,62 +1,103 @@
-// Require the necessary discord.js classes
-const fs = require('node:fs');
-const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
+const Discord = require("discord.js")
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
+const client = new Client({
+  partials: [
+    Partials.Message, // for message
+    Partials.Channel, // for text channel
+    Partials.GuildMember, // for guild member
+    Partials.Reaction, // for message reaction
+  ],
+  intents: [
+    GatewayIntentBits.Guilds, // for guild related things
+    GatewayIntentBits.GuildInvites, // for guild invite managing
+    GatewayIntentBits.GuildMessages, // for guild messages things
+    GatewayIntentBits.GuildMessageReactions, // for message reactions things
+    GatewayIntentBits.MessageContent, // enable if you need message content things
+  ],
+});
+const fs = require("fs");
+const config = require("./config.json");
+client.config = config;
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+// Initialise discord giveaways
+const { GiveawaysManager } = require("discord-giveaways");
+client.giveawaysManager = new GiveawaysManager(client, {
+  storage: "./storage/giveaways.json",
+  default: {
+    botsCanWin: false,
+    embedColor: "#2F3136",
+    reaction: "🎉",
+    lastChance: {
+      enabled: true,
+      content: `🛑 **Last chance to enter** 🛑`,
+      threshold: 5000,
+      embedColor: '#FF0000'
+    }
+  }
+});
+//Coded by ZeroSync on yt
 
-// When the client is ready, run this code (only once).
-// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
-// It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+/* Load all events (discord based) */
+
+
+fs.readdir("./events/discord", (_err, files) => {
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    const event = require(`./events/discord/${file}`);
+    let eventName = file.split(".")[0];
+    console.log(`[Event]   ✅  Loaded: ${eventName}`);
+    client.on(eventName, event.bind(null, client));
+    delete require.cache[require.resolve(`./events/discord/${file}`)];
+  });
+});
+
+/* Load all events (giveaways based) */
+
+
+fs.readdir("./events/giveaways", (_err, files) => {
+  files.forEach((file) => {
+    if (!file.endsWith(".js")) return;
+    const event = require(`./events/giveaways/${file}`);
+    let eventName = file.split(".")[0];
+    console.log(`[Event]   🎉 Loaded: ${eventName}`);
+    client.giveawaysManager.on(eventName, (...file) => event.execute(...file, client)), delete require.cache[require.resolve(`./events/giveaways/${file}`)];
+  })
+})
+
+// Let commands be a new collection ( message commands )
+client.commands = new Discord.Collection();
+/* Load all commands */
+fs.readdir("./commands/", (_err, files) => {
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let props = require(`./commands/${file}`);
+    let commandName = file.split(".")[0];
+    client.commands.set(commandName, {
+      name: commandName,
+      ...props
+    });
+    console.log(`[Command] ✅  Loaded: ${commandName}`);
+  });
+});
+
+// let interactions be a new collection ( slash commands  )
+client.interactions = new Discord.Collection();
+// creating an empty array for registering slash commands
+client.register_arr = []
+/* Load all slash commands */
+fs.readdir("./slash/", (_err, files) => {
+  files.forEach(file => {
+    if (!file.endsWith(".js")) return;
+    let props = require(`./slash/${file}`);
+    let commandName = file.split(".")[0];
+    client.interactions.set(commandName, {
+      name: commandName,
+      ...props
+    });
+    client.register_arr.push(props)
+  });
 });
 
 
-
-
-client.commands = new Collection();
-
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
-
-for (const folder of commandFolders) {
-	const commandsPath = path.join(foldersPath, folder);
-	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-	for (const file of commandFiles) {
-		const filePath = path.join(commandsPath, file);
-		const command = require(filePath);
-		// Set a new item in the Collection with the key as the command name and the value as the exported module
-		if ('data' in command && 'execute' in command) {
-			client.commands.set(command.data.name, command);
-		} else {
-			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-		}
-	}
-}
-client.on(Events.InteractionCreate, async interaction => {
-	if (!interaction.isChatInputCommand()) return;
-
-	const command = interaction.client.commands.get(interaction.commandName);
-
-	if (!command) {
-		console.error(`No command matching ${interaction.commandName} was found.`);
-		return;
-	}
-
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
-		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-		}
-	}
-});
-
-// Log in to Discord with your client's token
-client.login(token);
+// Login through the client
+client.login(config.token);
