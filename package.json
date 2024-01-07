@@ -1,35 +1,42 @@
 {
-  "name": "GiveawayBot",
-  "version": "3.0.0",
-  "description": "Giveaway bot created with discord-giveaways package in discord.js v14",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node index.js",
-    "start": "node index.js"
+  "name": "discord-bot-template",
+  "version": "1.0.0",
+  "description": "A Discord bot boilerplate including TypeScript and ESLint.",
+  "author": {
+    "email": "fellipeutaka@gmail.com",
+    "name": "Fellipe Utaka"
   },
-  "author": "Zero",
-  "license": "CC-Zero",
-  "keywords": [
-    "discord",
-    "giveaways",
-    "giveaway",
-    "bot",
-    "discord.js",
-    "discordjs"
-  ],
-  "dependencies": {
-    "discord-giveaways": "^6.0.1",
-    "discord.js": "^14.6.0",
-    "ms": "^3.0.0-canary.1",
-    "parsec": "^2.0.2"
-  },
-  "engines": {
-    "node": "16.x"
-  },
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://github.com/fellipeutaka/discord-bot-template",
   "repository": {
-    "url": "https://github.com/ZeroDiscord/Giveaway"
+    "type": "git",
+    "url": "https://github.com/fellipeutaka/discord-bot-template.git"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node .",
+    "build": "tsup src/index.ts --minify",
+    "format": "prettier --write \"**/*.{json,ts}\"",
+    "lint": "eslint . --ext ts --fix"
+  },
+  "dependencies": {
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3"
   },
   "devDependencies": {
-    "node": "^16.9.1"
+    "@types/node": "^18.13.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.8.4",
+    "tsup": "^6.6.0",
+    "tsx": "^3.12.3",
+    "typescript": "^4.9.5"
   }
 }
