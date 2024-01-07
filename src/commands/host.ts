@@ -1,4 +1,5 @@
-import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel } from "discord.js";
+import { client } from "..";
 
 export const data = new SlashCommandBuilder()
 
@@ -17,8 +18,15 @@ export const data = new SlashCommandBuilder()
     .setRequired(true)
   );
 
+
 export async function execute(interaction: CommandInteraction) {
-  return interaction.reply("Hello World!");
+  const info = interaction.options as CommandInteractionOptionResolver;
+  const channel = info.getChannel("channel");
+  const message= info.getString("message");
+
+  const channell: TextChannel = client.channels.cache.get(channel) as TextChannel;                
+  channell.send(message.)
+  return interaction.reply("Done!");
 }
 
 
