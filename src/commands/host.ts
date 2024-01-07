@@ -27,10 +27,18 @@ export async function execute(interaction: CommandInteraction) {
   const guildId =interaction.guildId;
   if(guildId){
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;             
-    const channell: TextChannel =     guild.channels.cache.get(channel!.id) as TextChannel;
+    const channell: TextChannel =     guild.channels.cache.get(channel!.id) as TextChannel
+    const exampleEmbed = new EmbedBuilder()
+	.setColor(0x0099FF)
+	.setTitle('Hunger games')
+	.setDescription(message)
+	.setTimestamp()
+	.setFooter({ text: 'Hosted by Hunger games bot', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
+    
+    ;
     if(message){
 
-      channell.send(message);
+      channell.send({ embeds: [exampleEmbed] });
       }
   }             
   return interaction.reply("Done!");
