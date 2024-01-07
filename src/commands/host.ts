@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel, Guild } from "discord.js";
 import { client } from "..";
 
 export const data = new SlashCommandBuilder()
@@ -24,8 +24,15 @@ export async function execute(interaction: CommandInteraction) {
   const channel = info.getChannel("channel");
   const message= info.getString("message");
 
-  const channell: TextChannel = client.channels.cache.get(channel) as TextChannel;                
-  channell.send(message.)
+  const guildId =interaction.guildId;
+  if(guildId){
+    const guild: Guild = client.guilds.cache.get(guildId) as Guild;             
+    const channell: TextChannel =     guild.channels.cache.get(channel!.id) as TextChannel;
+    if(message){
+
+      channell.send(message);
+      }
+  }             
   return interaction.reply("Done!");
 }
 
