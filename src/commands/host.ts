@@ -16,15 +16,20 @@ export const data = new SlashCommandBuilder()
     .setName("message")
     .setDescription("What message would you like to appear in the channel")
     .setRequired(true)
+  )
+  .addIntegerOption((timer) =>
+  timer 
+  .setName("time")
+  .setDescription("How much time before the hunger games begins")
+  .setRequired(true)
   );
-
 
 export async function execute(interaction: CommandInteraction) {
   const info = interaction.options as CommandInteractionOptionResolver;
   const channel = info.getChannel("channel");
-  const message= info.getString("message");
-
-  const guildId =interaction.guildId;
+  const message = info.getString("message");
+  const timer = info.getInteger("time")
+  const guildId = interaction.guildId;
   if(guildId){
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;             
     const channell: TextChannel =     guild.channels.cache.get(channel!.id) as TextChannel
