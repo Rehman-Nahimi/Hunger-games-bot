@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel, Guild } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel, Guild, Events, GatewayIntentBits } from "discord.js";
 import { client } from "..";
 
 export const data = new SlashCommandBuilder()
@@ -38,10 +38,12 @@ export async function execute(interaction: CommandInteraction) {
     ;
     if(message){
 
-      channell.send({ embeds: [exampleEmbed] });
+      channell.send({ embeds: [exampleEmbed] }).then(embedMessage => {
+        embedMessage.react("👍");
+      });
       }
   }             
-  return interaction.reply("Done!");
+  return interaction.reply("Done! check your message in " + channel);
 }
 
 
