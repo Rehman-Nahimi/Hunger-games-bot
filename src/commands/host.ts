@@ -28,7 +28,7 @@ export async function execute(interaction: CommandInteraction) {
   const info = interaction.options as CommandInteractionOptionResolver;
   const channel = info.getChannel("channel");
   const message = info.getString("message");
-  const timer = info.getInteger("time")
+  const timer = info.getInteger("time");
   const guildId = interaction.guildId;
   if(guildId){
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;             
