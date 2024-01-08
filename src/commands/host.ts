@@ -63,8 +63,8 @@ export async function execute(interaction: CommandInteraction) {
     }
   }
   const extraInfo = isNaN(timerrr) ? "" : `The timer is ${timerrr} in ms`;
-  
+
   return interaction.reply(
-    "Done! check your message in " + `<#${channel?.id}>   ${extraInfo}`
+    `Done! check your message in  <#${channel?.id}>   ${extraInfo}`
   );
 }
