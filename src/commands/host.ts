@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, Message, EmbedBuilder, MessageReaction, User, CommandInteractionOptionResolver, Channel, TextChannel, Guild, Events, GatewayIntentBits } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, EmbedBuilder, CommandInteractionOptionResolver, TextChannel, Guild } from "discord.js";
 import { client } from "..";
 
 export const data = new SlashCommandBuilder()
@@ -35,13 +35,13 @@ export async function execute(interaction: CommandInteraction) {
     const channell: TextChannel =     guild.channels.cache.get(channel!.id) as TextChannel
     const exampleEmbed = new EmbedBuilder()
 	.setColor(0x0099FF)
-	.setTitle('Hunger games')
+	.setTitle("Hunger games")
 	.setDescription(message)
 	.setTimestamp()
-	.setFooter({ text: 'Hosted by Hunger games bot', iconURL: `${client.user?.avatarURL()}` })
+	.setFooter({ text: "Hosted by Hunger games bot", iconURL: `${client.user?.avatarURL()}` })
     ;
     if(message){
-      channell.send({ embeds: [exampleEmbed] }).then(embedMessage => {
+      channell.send({ embeds: [exampleEmbed] }).then((embedMessage) => {
         embedMessage.react("👍");
       });
       }
