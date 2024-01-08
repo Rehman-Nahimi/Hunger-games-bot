@@ -5,6 +5,13 @@ import {
   CommandInteractionOptionResolver,
   TextChannel,
   Guild,
+  Client,
+  Events,
+  GatewayIntentBits,
+  ReactionEmoji,
+  MessageReaction,
+  User,
+  
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
@@ -59,12 +66,32 @@ export async function execute(interaction: CommandInteraction) {
     if (message) {
       channell.send({ embeds: [exampleEmbed] }).then((embedMessage) => {
         embedMessage.react("👍");
+
+        const collectorFilter = (reaction: MessageReaction, user: User) => {
+          return reaction.emoji.name === '👍' && user.id === embedMessage.author.id;
+      };
+
+      
+        //Awaiting reactions
+  embedMessage.awaitReactions( { filter:collectorFilter, time: timerrr }).then(collected => console.log(collected.size))
+  .catch(collected => {
+      console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
+  })
       });
     }
+    
   }
-  const extraInfo = isNaN(timerrr) ? "" : `The timer is ${timerrr} in ms`;
 
+
+  const extraInfo = isNaN(timerrr) ? "" : `The timer is ${timerrr} in ms`;
+  
   return interaction.reply(
-    `Done! check your message in  <#${channel?.id}>   ${extraInfo}`
+    "Done! check your message in " + `<#${channel?.id}>   ${extraInfo}`
   );
+
+    
+  
 }
+
+
+
