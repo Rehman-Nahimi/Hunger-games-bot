@@ -38,17 +38,15 @@ export async function execute(interaction: CommandInteraction) {
 	.setTitle('Hunger games')
 	.setDescription(message)
 	.setTimestamp()
-	.setFooter({ text: 'Hosted by Hunger games bot', iconURL: 'https://i.imgur.com/AfFp7pu.png' })
-    
+	.setFooter({ text: 'Hosted by Hunger games bot', iconURL: `${client.user?.avatarURL()}` })
     ;
     if(message){
-
       channell.send({ embeds: [exampleEmbed] }).then(embedMessage => {
         embedMessage.react("👍");
       });
       }
   }             
-  return interaction.reply("Done! check your message in " + channel);
+  return interaction.reply("Done! check your message in " + `<#${channel?.id}>`);
 }
 
 
