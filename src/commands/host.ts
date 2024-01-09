@@ -84,7 +84,7 @@ export async function execute(interaction: CommandInteraction) {
           console.log(userIds);
 
           let str = ""; 
-          userIds?.forEach((x)=> str += `<@${x.id}>\r\n`);
+          userIds?.forEach((x)=> str += `<@${x.id}>   ${x.avatarURL()}\r\n`);
 
           channell.send(str);
           console.log(`Collected ${collected.size} items`);
