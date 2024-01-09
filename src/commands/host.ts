@@ -11,7 +11,6 @@ import {
   ReactionEmoji,
   MessageReaction,
   User,
-  
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
@@ -68,30 +67,35 @@ export async function execute(interaction: CommandInteraction) {
         embedMessage.react("👍");
 
         const collectorFilter = (reaction: MessageReaction, user: User) => {
-          return reaction.emoji.name === '👍' && user.id === embedMessage.author.id;
-      };
+          return (
+            reaction.emoji.name === "👍" && user.id === embedMessage.author.id
+          );
+        };
 
-      
-        //Awaiting reactions
-  embedMessage.awaitReactions( { filter:collectorFilter, time: timerrr }).then(collected => console.log(collected.size))
-  .catch(collected => {
-      console.log(`After a minute, only ${collected.size} out of 4 reacted.`);
-  })
+        const collector = embedMessage.createReactionCollector({
+          filter: collectorFilter,
+          time: timerrr,
+        });
+
+        collector.on("end", (collected) => {
+          const userIds = collected
+            .get("👍")
+            ?.users.cache.filter((x) => x.id !== client.application?.id);
+          console.log(userIds);
+
+          let str = ""; 
+          userIds?.forEach((x)=> str += `<@${x.id}>\r\n`);
+
+          channell.send(str);
+          console.log(`Collected ${collected.size} items`);
+        });
       });
     }
-    
   }
 
-
   const extraInfo = isNaN(timerrr) ? "" : `The timer is ${timerrr} in ms`;
-  
+
   return interaction.reply(
     "Done! check your message in " + `<#${channel?.id}>   ${extraInfo}`
   );
-
-    
-  
 }
-
-
-
