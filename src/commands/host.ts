@@ -11,6 +11,7 @@ import {
   ReactionEmoji,
   MessageReaction,
   User,
+  APIEmbedField,
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
@@ -53,7 +54,6 @@ export async function execute(interaction: CommandInteraction) {
       channel!.id
     ) as TextChannel;
 
-    
     const exampleEmbed = new EmbedBuilder()
 
       .setColor(0x0099ff)
@@ -85,23 +85,38 @@ export async function execute(interaction: CommandInteraction) {
             ?.users.cache.filter((x) => x.id !== client.application?.id);
           console.log(userIds);
 
-          let str = ""; 
-          userIds?.forEach((x)=> str += `<@${x.id}>   ${x.avatarURL()}\r\n`);
+          let str = "";
+          userIds?.forEach((x) => (str += `<@${x.id}>   ${x.avatarURL()}\r\n`));
+          // channell.send(str);
 
-          channell.send(str);
+          const items: APIEmbedField[] = [];
           console.log(`Collected ${collected.size} items`);
-          const districtEmbed = new EmbedBuilder()
 
-          .setColor(0x0099FF)
-          .setTitle('District selection')
-          .setDescription('The proceedings are as follows:')
-          .addFields(
-            { name: 'Inline field title', value: 'Some value here', inline: true },
-            { name: 'Inline field title', value: 'Some value here', inline: true },
-          )
-          .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-          .setTimestamp()
-          .setFooter({ text: 'Some footer text here', iconURL:`${client.user?.avatarURL()}` });
+          userIds?.forEach((element) => {
+            items.push({
+              name: `${element.displayName}`,
+              value: `${element.avatarURL()}`,
+              inline: true,
+            });
+          });
+
+          const districtEmbed = new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("District selection")
+            .setDescription("The proceedings are as follows:")
+            .addFields(items)
+            .addFields({
+              name: "Inline field title",
+              value: "Some value here",
+              inline: true,
+            })
+            .setTimestamp()
+            .setFooter({
+              text: "Some footer text here",
+              iconURL: `${client.user?.avatarURL()}`,
+            });
+
+          channell.send({ embeds: [districtEmbed] });
         });
       });
     }
