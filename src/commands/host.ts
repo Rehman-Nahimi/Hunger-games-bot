@@ -52,6 +52,8 @@ export async function execute(interaction: CommandInteraction) {
     const channell: TextChannel = guild.channels.cache.get(
       channel!.id
     ) as TextChannel;
+
+    
     const exampleEmbed = new EmbedBuilder()
 
       .setColor(0x0099ff)
@@ -88,6 +90,16 @@ export async function execute(interaction: CommandInteraction) {
 
           channell.send(str);
           console.log(`Collected ${collected.size} items`);
+          const districtEmbed = new EmbedBuilder()
+
+      .setColor(0x0099ff)
+      .setTitle("Hunger Games Districts")
+      .setDescription(message)
+      .setTimestamp()
+      .setFooter({
+        text: "Hosted by Hunger games bot",
+        iconURL: `${client.user?.avatarURL()}`,
+      });
         });
       });
     }
