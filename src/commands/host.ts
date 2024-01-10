@@ -92,14 +92,16 @@ export async function execute(interaction: CommandInteraction) {
           console.log(`Collected ${collected.size} items`);
           const districtEmbed = new EmbedBuilder()
 
-      .setColor(0x0099ff)
-      .setTitle("Hunger Games Districts")
-      .setDescription(message)
-      .setTimestamp()
-      .setFooter({
-        text: "Hosted by Hunger games bot",
-        iconURL: `${client.user?.avatarURL()}`,
-      });
+          .setColor(0x0099FF)
+          .setTitle('District selection')
+          .setDescription('The proceedings are as follows:')
+          .addFields(
+            { name: 'Inline field title', value: 'Some value here', inline: true },
+            { name: 'Inline field title', value: 'Some value here', inline: true },
+          )
+          .addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+          .setTimestamp()
+          .setFooter({ text: 'Some footer text here', iconURL:`${client.user?.avatarURL()}` });
         });
       });
     }
