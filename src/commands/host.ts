@@ -89,28 +89,17 @@ export async function execute(interaction: CommandInteraction) {
           userIds?.forEach((x) => (str += `<@${x.id}>   ${x.avatarURL()}\r\n`));
           // channell.send(str);
 
-          const items: APIEmbedField[] = [];
           console.log(`Collected ${collected.size} items`);
-
-          userIds?.forEach((element) => {
-            items.push({
-              name: `${element.displayName}`,
-              value: `${element.avatarURL()}`,
-              inline: true,
-            });
-          });
-
           const districtEmbed = new EmbedBuilder()
             .setColor(0x0099ff)
             .setTitle("District selection")
-            .setDescription("The proceedings are as follows:")
-            .addFields(items)
+            .setDescription("The proceedings are as follows: Dragon")
             .addFields({
               name: "Inline field title",
               value: "Some value here",
               inline: true,
             })
-            .setTimestamp()
+            .setImage("https://cdn.discordapp.com/avatars/262185111955570689/b05061ae6caaf6f5d67fe7b69c4c4862.webp")
             .setFooter({
               text: "Some footer text here",
               iconURL: `${client.user?.avatarURL()}`,
