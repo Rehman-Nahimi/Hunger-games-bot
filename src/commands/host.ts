@@ -49,22 +49,23 @@ export async function execute(interaction: CommandInteraction) {
 
   const timerrr = ms(timer as string);
 
-  function nextStage() {
-    let numberAlive = 5
+  // function nextStage() {
+  //   var numberAlive = 5
 
-    if numberAlive = 1 {
-      endGame
-    } else{
-      nextRound
-    }
+  //   if numberAlive = 1 {
+  //     endGame
+  //   } else{
+  //     nextRound
+  //   }
 
-    function nextRound(){
-      //Next round simulation goes in here
-    }
-    function endGame() {
-      //Game end goes in here
-    }
-  }
+  //   function nextRound(){
+  //     //Next round simulation goes in here
+  //   }
+  //   function endGame() {
+  //     //Game end goes in here
+  //   }
+  // }
+  
 
   if (guildId) {
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;
@@ -107,7 +108,12 @@ export async function execute(interaction: CommandInteraction) {
           userIds?.forEach((x) => (str += `<@${x.id}>   ${x.avatarURL()}\r\n`));
           // channell.send(str);
 
+          function nextDistrict() {
+            let strr = "";
+            userIds?.forEach((x) => (strr += `<@${x.id}>   ${x.avatarURL()}\r\n`));
+          }
           console.log(`Collected ${collected.size} items`);
+
           const districtEmbed = new EmbedBuilder()
             .setColor(0x0099ff)
             .setTitle("District selection")
@@ -124,7 +130,9 @@ export async function execute(interaction: CommandInteraction) {
             });
 
           channell.send({ embeds: [districtEmbed] });
+          nextDistrict()
         });
+        
       });
     }
   }
