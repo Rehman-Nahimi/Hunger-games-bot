@@ -130,7 +130,7 @@ export async function execute(interaction: CommandInteraction) {
             });
 
           channell.send({ embeds: [districtEmbed] });
-          nextDistrict()
+          //nextDistrict()
         });
         
       });
