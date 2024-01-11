@@ -5,17 +5,11 @@ import {
   CommandInteractionOptionResolver,
   TextChannel,
   Guild,
-  Client,
-  Events,
-  GatewayIntentBits,
-  ReactionEmoji,
   MessageReaction,
   User,
-  APIEmbedField,
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
-import test from "node:test";
 
 export const data = new SlashCommandBuilder()
 
@@ -111,6 +105,7 @@ export async function execute(interaction: CommandInteraction) {
           function nextDistrict() {
             let strr = "";
             userIds?.forEach((x) => (strr += `<@${x.id}>   ${x.avatarURL()}\r\n`));
+            channell.send(strr)
           }
           console.log(`Collected ${collected.size} items`);
 
@@ -130,7 +125,7 @@ export async function execute(interaction: CommandInteraction) {
             });
 
           channell.send({ embeds: [districtEmbed] });
-          //nextDistrict()
+          nextDistrict()
         });
         
       });
