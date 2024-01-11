@@ -15,6 +15,7 @@ import {
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
+import test from "node:test";
 
 export const data = new SlashCommandBuilder()
 
@@ -47,6 +48,23 @@ export async function execute(interaction: CommandInteraction) {
   const guildId = interaction.guildId;
 
   const timerrr = ms(timer as string);
+
+  function nextStage() {
+    let numberAlive = 5
+
+    if numberAlive = 1 {
+      endGame
+    } else{
+      nextRound
+    }
+
+    function nextRound(){
+      //Next round simulation goes in here
+    }
+    function endGame() {
+      //Game end goes in here
+    }
+  }
 
   if (guildId) {
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;
