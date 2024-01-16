@@ -22,11 +22,16 @@ export function MakeGame(totalPlayers: Player[]): Game {
     Districts: [],
   };
   
+  //Equation for the player per District 
   const count = totalPlayers.length;
   const playerPerGroup = 2;
   const districtCount = count / playerPerGroup;
+
+
+
+  //Extra counter for logic needed
   let x = 0;
-  
+
   //Sets the players to the Districts
   //here comes the Logic with random Picks
   for (let i = 0; i < districtCount; i++) {

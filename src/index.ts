@@ -1,11 +1,11 @@
 import { MakeGame, makeid } from "./helpers/helpfuntions";
-import { Game } from "./types/Game";
 import { Player } from "./types/Player";
 
 //Constants for Test Usage
-const NAME_LENGTHS = 16;
+const NAME_LENGTHS = 8;
 const URL_LENGTHS = 24;
 const COUNT_PLAYERS = 22;
+
 const totalPlayers: Player[] = [];
 
 //Adding Test Items
@@ -17,13 +17,20 @@ for (let i = 0; i < COUNT_PLAYERS; i++) {
   });
 }
 
+//Show the Items and such in Console like preview.
+console.log("The test Users");
+console.table(
+  totalPlayers.map((val) => ({
+    Name_Player: val.Name,
+    Url_player_pic: val.Url,
+  }))
+);
+
 // Here is the Important Part
 // -------------------------------------
 //Create the game needs more Logic here
 const game = MakeGame(totalPlayers);
 // -------------------------------------
-
-
 
 //Show the Items and such in Console like preview.
 console.table(
