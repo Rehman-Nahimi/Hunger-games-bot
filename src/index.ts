@@ -1,4 +1,4 @@
-import { MakeGame, makeid } from "./helpers/helpfuntions";
+import { MakeGameV2, makeid } from "./helpers/helpfuntions";
 import { Player } from "./types/Player";
 
 //Constants for Test Usage
@@ -12,7 +12,7 @@ const totalPlayers: Player[] = [];
 for (let i = 0; i < COUNT_PLAYERS; i++) {
   totalPlayers.push({
     IsAlive: true,
-    Name: makeid(NAME_LENGTHS),
+    Name:  `${i}`, // or use makeid(NAME_LENGTHS)
     Url: makeid(URL_LENGTHS),
   });
 }
@@ -29,7 +29,7 @@ console.table(
 // Here is the Important Part
 // -------------------------------------
 //Create the game needs more Logic here
-const game = MakeGame(totalPlayers);
+const game = MakeGameV2(totalPlayers);
 // -------------------------------------
 
 //Show the Items and such in Console like preview.
