@@ -22,7 +22,9 @@
     "lint": "eslint . --ext ts --fix"
   },
   "dependencies": {
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "node-html-to-image": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.13.0",

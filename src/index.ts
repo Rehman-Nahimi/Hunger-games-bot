@@ -1,54 +1,10 @@
-import { MakeGameV2, makeid } from "./helpers/helpfuntions";
-import { Player } from "./types/Player";
+import nodeHtmlToImage from "node-html-to-image";
+import fs from "fs";
 
-//Constants for Test Usage
-const NAME_LENGTHS = 8;
-const URL_LENGTHS = 24;
-const COUNT_PLAYERS = 22;
 
-const totalPlayers: Player[] = [];
+const file = fs.readFileSync("view\\temp.html", "utf-8");
 
-//Adding Test Items
-for (let i = 0; i < COUNT_PLAYERS; i++) {
-  totalPlayers.push({
-    IsAlive: true,
-    Name:  `${i}`, // or use makeid(NAME_LENGTHS)
-    Url: makeid(URL_LENGTHS),
-  });
-}
-
-//Show the Items and such in Console like preview.
-console.log("The test Users");
-console.table(
-  totalPlayers.map((val) => ({
-    Name_Player: val.Name,
-    Url_player_pic: val.Url,
-  }))
-);
-
-// Here is the Important Part
-// -------------------------------------
-//Create the game needs more Logic here
-const game = MakeGameV2(totalPlayers);
-// -------------------------------------
-
-//Show the Items and such in Console like preview.
-console.table(
-  game.Districts.map((val) => ({
-    District_Number: val.DistNumber,
-    Player_Objects: val.Players,
-  }))
-);
-
-//Showing all Districts
-for (let index = 0; index < game.Districts.length; index++) {
-  console.log(`Show Players in District ${index}`);
-
-  //To Show Results
-  console.table(
-    game.Districts[index].Players.map((val) => ({
-      Player_Name: val.Name,
-      Player_Url: val.Url,
-    }))
-  );
-}
+nodeHtmlToImage({
+  output: "Out\\image.png",
+  html: file,
+});
