@@ -1,0 +1,27 @@
+<diagram program="umletino" version="15.1"><zoom_level>15</zoom_level><element><id>UMLClass</id><coordinates><x>255</x><y>90</y><w>435</w><h>180</h></coordinates><panel_attributes>Game
+-
++ Districts: District [ ]
+
+-
+
++ Game() -&gt;Constructor
++ StartGame(): void
++ ForceStop(): void
+-
++ StartGame(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>255</x><y>330</y><w>435</w><h>180</h></coordinates><panel_attributes>District
+-
++ Districts: District [ ]
+-
++ Game() -&gt;Constructor
++ StartGame(): void
++ ForceStop(): void
++ StartGame(): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>255</x><y>570</y><w>435</w><h>195</h></coordinates><panel_attributes>Player
+-
++ Name: string
++ Url: string
++ IsAlive: boolean
+-
++ Player(Name:string, Url: string) -&gt;Constructor
++ Die(): void
++ FightPlayer(enemy: Player): void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>255</y><w>45</w><h>105</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>450</x><y>495</y><w>45</w><h>105</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element></diagram>
