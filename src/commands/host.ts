@@ -32,13 +32,20 @@ export const data = new SlashCommandBuilder()
       .setName("time")
       .setDescription("How much time before the hunger games begins")
       .setRequired(true)
-  );
+  )
+  .addIntegerOption((playercount) =>
+    playercount
+      .setName("players")
+      .setDescription("How many people will be playing?")
+      .setRequired(true)
+  )
 
 export async function execute(interaction: CommandInteraction) {
   const info = interaction.options as CommandInteractionOptionResolver;
   const channel = info.getChannel("channel");
   const message = info.getString("message");
   const timer = info.getString("time");
+  const playerCount = info.getInteger("playercount");
   const guildId = interaction.guildId;
 
   const timerrr = ms(timer as string);
