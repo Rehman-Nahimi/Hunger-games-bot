@@ -1,33 +1,62 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headline and Circular Pictures with Headings</title>
     <style>
-        
-        img{
-            width: 50%;
-            height: auto;
+        .picture-container {
+            display: flex;
+            justify-content: space-around; /* Optional: Adjust the spacing between pictures */
+            align-items: center; /* Optional: Align items vertically in the center */
         }
 
-        p.test{
-            font-size: xx-large;
+        .picture-container > div {
+            text-align: center;
+        }
+
+        .rounded-image {
+            width: 100px; /* Optional: Adjust the size of the circular images */
+            height: 100px;
+            border-radius: 50%; /* This creates a circular shape */
+            overflow: hidden;
+            margin: 5px; /* Optional: Add some margin between pictures */
+        }
+
+        .rounded-image img {
+            width: 100%; /* Make the image fill the circular container */
+            height: auto;
+            border: 2px solid #fff; /* Optional: Add a border to the images */
         }
     </style>
 </head>
-
 <body>
 
-    <p class="test">Im the best, actual cap hahaha!</p>
+    <h1>Your Headline Here</h1>
 
-    <p>
-        Dragon
-    </p>
-    <img
-        src="https://cdn.discordapp.com/avatars/262185111955570689/98451dcb8170b47d0cb0313df0299211.webp?quality=lossless&size=4096" />
-        <p>
-            Ray
-        </p>
-        <img
-            src="https://cdn.discordapp.com/avatars/287332990990811146/ca2f8d8d4fcc27f29f4c8191aaec4717.webp?quality=lossless&size=4096" />
+    <div class="picture-container">
+        <div>
+            <h2>Picture 1</h2>
+            <div class="rounded-image">
+                <img src="https://cdn.discordapp.com/avatars/262185111955570689/d0ba1fac2d11e986cbbff972391b9639.webp?quality=lossless&size=4096" alt="Image 1">
+            </div>
+        </div>
+        
+        <div>
+            <h2>Picture 2</h2>
+            <div class="rounded-image">
+                <img src="https://cdn.discordapp.com/avatars/1011247677079560242/e1f4bdcd076bdbd2cca25ab15b883964.webp?quality=lossless&size=4096" alt="Image 2">
+            </div>
+        </div>
+
+        <div>
+            <h2>Picture 3</h2>
+            <div class="rounded-image">
+                <img src="https://cdn.discordapp.com/avatars/287332990990811146/f096c5114d7d3cfccfe55a992dae143e.webp?quality=lossless&size=4096" alt="Image 3">
+            </div>
+        </div>
+        <!-- Add more picture-heading-image sets as needed -->
+    </div>
+
 </body>
-
 </html>
