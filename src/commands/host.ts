@@ -50,24 +50,6 @@ export async function execute(interaction: CommandInteraction) {
 
   const timerrr = ms(timer as string);
 
-  // function nextStage() {
-  //   var numberAlive = 5
-
-  //   if numberAlive = 1 {
-  //     endGame
-  //   } else{
-  //     nextRound
-  //   }
-
-  //   function nextRound(){
-  //     //Next round simulation goes in here
-  //   }
-  //   function endGame() {
-  //     //Game end goes in here
-  //   }
-  // }
-  
-
   if (guildId) {
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;
     const channell: TextChannel = guild.channels.cache.get(
