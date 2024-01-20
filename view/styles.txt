@@ -1,0 +1,47 @@
+<style>
+        body{
+            background-color: rgb(219, 200, 227);
+        }
+        div {
+            text-align: center;
+            margin: 10px;
+        }
+
+        img {
+            width: 100px;
+            height: auto;
+        }
+
+        h1,
+        h2,
+        img {
+            margin: 0;
+        }
+
+        p.test {
+            font-size: xx-large;
+        }
+
+        .picture-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin: 20px;
+        }
+
+        .picture-container>div {
+            text-align: center;
+        }
+
+        .picture-container {
+            display: flex;
+        }
+
+        .picture-container>div {
+            margin: 10px;
+            /* Optional: Add some margin between pictures */
+            text-align: center;
+            /* Optional: Center the text and image within each div */
+        }
+    </style>
