@@ -45,7 +45,7 @@ export async function execute(interaction: CommandInteraction) {
   const channel = info.getChannel("channel");
   const message = info.getString("message");
   const timer = info.getString("time");
-  const playerCount = info.getInteger("playercount");
+  const playerCount = info.getInteger("players");
   const guildId = interaction.guildId;
 
   const timerrr = ms(timer as string);
@@ -101,7 +101,7 @@ export async function execute(interaction: CommandInteraction) {
           const districtEmbed = new EmbedBuilder()
             .setColor(0x0099ff)
             .setTitle("District selection")
-            .setDescription("The proceedings are as follows: Dragon")
+            .setDescription("The proceeding  are as follows: Dragon")
             .addFields({
               name: "Inline field title",
               value: "Some value here",
@@ -112,8 +112,9 @@ export async function execute(interaction: CommandInteraction) {
               text: "Some footer text here",
               iconURL: `${client.user?.avatarURL()}`,
             });
+            channell.send(`There should be ${playerCount} joining`);
 
-          channell.send({ embeds: [districtEmbed] });
+          channell.send( {  embeds: [districtEmbed] });
           nextDistrict()
         });
         
