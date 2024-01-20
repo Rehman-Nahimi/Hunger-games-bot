@@ -1,18 +1,18 @@
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
+import { FindCorrespondingValue, playerMap } from "./playerMap";
 
 const playerLimits = [6, 12, 24, 36, 48];
-const playerCounts = playerLimits[Math.floor(Math.random() * playerLimits.length)];
-console.log(playerCounts)
+const playerCounts =
+  playerLimits[Math.floor(Math.random() * playerLimits.length)];
 
-let districtCount = 12
+let districtCount = 12;
 
 if (playerCounts <= 12) {
-  districtCount = 6
-} else  {
-  districtCount = 12 
+  districtCount = 6;
+} else {
+  districtCount = 12;
 }
-console.log(districtCount)
 
 export function makeid(length: number) {
   let result = "";
@@ -34,9 +34,9 @@ export function MakeGame(totalPlayers: Player[]): Game {
   };
 
   //Equation for the player per District
- 
-  const playerPerGroup = playerCounts/districtCount;
-  
+
+  const playerPerGroup = playerCounts / districtCount;
+
   //Extra counter for logic needed
   let x = 0;
 
@@ -69,7 +69,7 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
     if (game.Districts[x] === undefined) {
       game.Districts.push({ DistNumber: x + 1, Players: [] });
     }
-    
+
     if (game.Districts[x].Players.length < playerPerGroup) {
       const index = Math.floor(Math.random() * totalPlayers.length);
       const playerAtIndex = totalPlayers.at(index);
@@ -87,5 +87,32 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
     }
   }
 
+  return game;
+}
+
+export function MakeGameV3(playerCount: number): Game {
+  const game: Game = {
+    Districts: [],
+  };
+
+  //Equation for the player per District
+  const playerPerGroup = FindCorrespondingValue(playerCount);
+  const distCount = playerCount / playerPerGroup;
+  //Extra counter for logic needed
+
+  for (let i = 0; i < distCount; i++) {
+    if (game.Districts[i] === undefined) {
+      game.Districts.push({ DistNumber: i + 1, Players: [] });
+    }
+
+    for (let j = 0; j < playerPerGroup; j++) {
+      const playerAtIndex: Player = {
+        IsAlive: true,
+        Name: makeid(8), // or use makeid(NAME_LENGTHS)
+        Url: makeid(24),
+      };
+      game.Districts[i].Players.push(playerAtIndex);
+    }
+  }
   return game;
 }
