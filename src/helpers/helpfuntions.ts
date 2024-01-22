@@ -1,6 +1,6 @@
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
-import { FindCorrespondingValue, playerMap } from "./playerMap";
+import { FindCorrespondingValue} from "./playerMap";
 
 const playerLimits = [6, 12, 24, 36, 48];
 const playerCounts =
