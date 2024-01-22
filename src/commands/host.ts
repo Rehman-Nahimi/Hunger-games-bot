@@ -6,10 +6,10 @@ import {
   TextChannel,
   Guild,
   MessageReaction,
-  User,
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
+import { Player } from "../types/Player";
 
 export const data = new SlashCommandBuilder()
 
@@ -33,12 +33,12 @@ export const data = new SlashCommandBuilder()
       .setDescription("How much time before the hunger games begins")
       .setRequired(true)
   )
-  .addIntegerOption((playercount) =>
-    playercount
+  .addIntegerOption((playerCount) =>
+    playerCount
       .setName("players")
       .setDescription("How many people will be playing?")
       .setRequired(true)
-  )
+  );
 
 export async function execute(interaction: CommandInteraction) {
   const info = interaction.options as CommandInteractionOptionResolver;
@@ -48,16 +48,19 @@ export async function execute(interaction: CommandInteraction) {
   const playerCount = info.getInteger("players");
   const guildId = interaction.guildId;
 
-  const timerrr = ms(timer as string);
+  const numbTime = ms(timer as string);
 
   if (guildId) {
     const guild: Guild = client.guilds.cache.get(guildId) as Guild;
-    const channell: TextChannel = guild.channels.cache.get(
-      channel!.id
-    ) as TextChannel;
+    let targetChannel: TextChannel;
+
+    if (channel !== null) {
+      targetChannel = guild.channels.cache.get(channel.id) as TextChannel;
+    } else {
+      targetChannel = interaction.channel as TextChannel;
+    }
 
     const exampleEmbed = new EmbedBuilder()
-
       .setColor(0x0099ff)
       .setTitle("Hunger games")
       .setDescription(message)
@@ -66,65 +69,63 @@ export async function execute(interaction: CommandInteraction) {
         text: "Hosted by Hunger games bot",
         iconURL: `${client.user?.avatarURL()}`,
       });
-    if (message) {
-      channell.send({ embeds: [exampleEmbed] }).then((embedMessage) => {
-        embedMessage.react("👍");
 
-        const collectorFilter = (reaction: MessageReaction, user: User) => {
-          return (
-            reaction.emoji.name === "👍" && user.id === embedMessage.author.id
-          );
-        };
-
-        const collector = embedMessage.createReactionCollector({
-          filter: collectorFilter,
-          time: timerrr,
-        });
-
-        collector.on("end", (collected) => {
-          const userIds = collected
-            .get("👍")
-            ?.users.cache.filter((x) => x.id !== client.application?.id);
-          console.log(userIds);
-
-          let str = "";
-          userIds?.forEach((x) => (str += `<@${x.id}>   ${x.avatarURL()}\r\n`));
-          // channell.send(str);
-
-          function nextDistrict() {
-            let strr = "";
-            userIds?.forEach((x) => (strr += `<@${x.id}>   ${x.avatarURL()}\r\n`));
-            channell.send(strr)
-          }
-          console.log(`Collected ${collected.size} items`);
-
-          const districtEmbed = new EmbedBuilder()
-            .setColor(0x0099ff)
-            .setTitle("District selection")
-            .setDescription("The proceeding  are as follows: Dragon")
-            .addFields({
-              name: "Inline field title",
-              value: "Some value here",
-              inline: true,
-            })
-            .setImage("https://cdn.discordapp.com/avatars/262185111955570689/b05061ae6caaf6f5d67fe7b69c4c4862.webp")
-            .setFooter({
-              text: "Some footer text here",
-              iconURL: `${client.user?.avatarURL()}`,
-            });
-            channell.send(`There should be ${playerCount} joining`);
-
-          channell.send( {  embeds: [districtEmbed] });
-          nextDistrict()
-        });
-        
-      });
+    if (message && targetChannel && playerCount) {
+      CollectUsers(targetChannel, exampleEmbed, numbTime, playerCount);
     }
   }
+  return interaction.reply({
+    content: `Done! The message should appear after ${timer} ms in <#${channel?.id}> `,
+    ephemeral: true,
+  });
+}
 
-  const extraInfo = isNaN(timerrr) ? "" : `The timer is ${timerrr} in ms`;
+async function CollectUsers(
+  channel: TextChannel,
+  embedMessage: EmbedBuilder,
+  timer: number,
+  playerCount: number
+) {
+  channel.send({ embeds: [embedMessage] }).then((embedMessage) => {
+    embedMessage.react("👍");
 
-  return interaction.reply(
-    "Done! check your message in " + `<#${channel?.id}>   ${extraInfo}`
-  );
+    const collectorFilter = (reaction: MessageReaction) => {
+      return reaction.emoji.name == "👍";
+    };
+
+    const collector = embedMessage.createReactionCollector({
+      filter: collectorFilter,
+      time: timer,
+      maxUsers: playerCount + 1,
+    });
+
+    collector.on("end", (collected) => {
+      const userIds = collected
+        .get("👍")
+        ?.users.cache.filter((x) => x.id !== client.application?.id);
+
+      //Create the Players from the
+      const players: Player[] = [];
+      userIds?.forEach((x) => {
+        const avaUrl = x.avatarURL();
+
+        if (avaUrl !== null) {
+          players.push({
+            IsAlive: true,
+            Name: x.username,
+            Url: avaUrl,
+          });
+        }
+      });
+
+      console.table(
+        players.map((x) => ({
+          Name_Player: x.Name,
+          Url_player_pic: x.Url,
+        }))
+      );
+
+      channel.send("The Collection ended");
+    });
+  });
 }
