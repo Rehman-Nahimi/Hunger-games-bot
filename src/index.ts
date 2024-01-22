@@ -55,3 +55,5 @@ const testDist: District = {
 };
 
 const gameTest = new GameClass(testDist.Players);
+
+console.log(gameTest);  
