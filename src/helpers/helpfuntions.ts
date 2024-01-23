@@ -64,7 +64,7 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
 
   //Extra counter for logic needed
   let x = 0;
-
+  
   while (totalPlayers.length > 0) {
     if (game.Districts[x] === undefined) {
       game.Districts.push({ DistNumber: x + 1, Players: [] });
