@@ -135,7 +135,7 @@ export function RoundGenerator(totalPlayers:Player[]): Round {
   const round: Round = {
     Players: [],
   };
-  round.Players = totalPlayers.filter((player)=>{player.IsAlive == true})
+  round.Players = totalPlayers.filter((player) => player.IsAlive == true)
   console.table(round.Players)
   const playerCount = round.Players.length
   
