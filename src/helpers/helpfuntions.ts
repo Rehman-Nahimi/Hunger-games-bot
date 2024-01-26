@@ -1,5 +1,6 @@
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
+import { Round } from "../types/Round";
 import { FindCorrespondingValue} from "./playerMap";
 
 const playerLimits = [6, 12, 24, 36, 48];
@@ -59,9 +60,9 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
     Districts: [],
   };
 
-  //Equation for the player per District
+  //Equation for the player per Districtfilter
   const playerPerGroup = 2;
-
+  
   //Extra counter for logic needed
   let x = 0;
   
@@ -115,4 +116,33 @@ export function MakeGameV3(playerCount: number): Game {
     }
   }
   return game;
+}
+
+export function Die() {
+  let result: boolean;
+  const randomInt = () =>
+  Math.floor(Math.random() * (100));
+  if (randomInt() >= 45) {
+    result = true
+  } else {
+    result = false
+  }
+
+  return result;
+}
+
+export function RoundGenerator(totalPlayers:Player[]): Round {
+  const round: Round = {
+    Players: [],
+  };
+  round.Players = totalPlayers.filter((player)=>{player.IsAlive == true})
+  console.table(round.Players)
+  const playerCount = round.Players.length
+  
+  for (let j = 0; j < playerCount; j++) {
+    round.Players[j].IsAlive = Die();
+    
+}
+console.table(round.Players)
+  return round;
 }

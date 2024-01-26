@@ -1,3 +1,5 @@
+import { platform } from "os";
+import { RoundGenerator } from "./helpers/helpfuntions";
 import { District } from "./types/District";
 import { GameClass } from "./types/GameClass";
 
@@ -54,6 +56,7 @@ const testDist: District = {
   ],
 };
 
-const gameTest = new GameClass(testDist.Players);
+//const gameTest = new GameClass(testDist.Players);
 
-console.log(gameTest);  
+//console.log(gameTest); 
+RoundGenerator(testDist.Players)
