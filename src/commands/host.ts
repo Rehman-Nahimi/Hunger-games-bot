@@ -10,6 +10,8 @@ import {
 import { client } from "..";
 import ms from "ms";
 import { Player } from "../types/Player";
+import { TestGame } from "../types/GameClass";
+import { url } from "inspector";
 
 export const data = new SlashCommandBuilder()
 
@@ -107,15 +109,13 @@ async function CollectUsers(
       //Create the Players from the
       const players: Player[] = [];
       userIds?.forEach((x) => {
-        const avaUrl = x.avatarURL();
+        const urlStr = x.avatarURL();
 
-        if (avaUrl !== null) {
-          players.push({
-            IsAlive: true,
-            Name: x.username,
-            Url: avaUrl,
-          });
-        }
+        players.push({
+          IsAlive: true,
+          Name: x.username,
+          Url: urlStr !== null ? urlStr : "",
+        });
       });
 
       console.table(
@@ -124,6 +124,8 @@ async function CollectUsers(
           Url_player_pic: x.Url,
         }))
       );
+
+      TestGame.PrepareGame(players,channel,  5000);
 
       channel.send("The Collection ended");
     });
