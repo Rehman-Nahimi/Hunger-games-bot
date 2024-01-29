@@ -46,10 +46,6 @@ class GameClass implements Game {
           }
         }
       };
-
-
-    
-
     } else {
       //Needed to end the Set-Interval (Automated round calls).
       if(game.intervalId !== null){
