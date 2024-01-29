@@ -4,19 +4,19 @@ import { MakeGameV2 } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { TextChannel } from "discord.js";
+import { AttachmentBuilder, EmbedBuilder, TextChannel } from "discord.js";
 import { channel } from "diagnostics_channel";
 
 class GameClass implements Game {
-   Districts: District[] = [];
-   Channel: TextChannel | null = null;
-  
-  //Placeholder for the Intervall Process Id.
-  private intervalId :NodeJS.Timeout |null = null;
+  Districts: District[] = [];
+  Channel: TextChannel | null = null;
 
-  PrepareGame( players: Player[], channel: TextChannel,  intervalTime = 5000){
+  //Placeholder for the Intervall Process Id.
+  private intervalId: NodeJS.Timeout | null = null;
+
+  PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
     this.Districts = MakeGameV2(players).Districts;
-    this.Channel = channel; 
+    this.Channel = channel;
     this.intervalId = setInterval(
       function (game) {
         game.PlayGame(game);
@@ -29,26 +29,29 @@ class GameClass implements Game {
   private PlayGame(game: GameClass): void {
     //Here out the Logic for the game rounds or start it.
     if (game.Districts.length > 0) {
-      game.Districts.splice(0, 1);
-
-      console.table(game.Districts);
       const str = CreateGameHtml(game);
-      
-       async ()=> {
-        for (let i = 0; i < str.length; i++) {
-          
+      for (let i = 0; i < str.length; i++) {
+        async () => {
           const image = await nodeHtmlToImage({
             html: str[i],
           });
-          
+
+          const test = image as Buffer;
+
+          console.log("This is the then", test);
           if (game.Channel !== null) {
-            game.Channel.send(image.toString()); 
+            const file = new AttachmentBuilder(test);
+            const exampleEmbed = new EmbedBuilder()
+              .setTitle("Some title")
+              .setImage("attachment://discordjs.png");
+
+            game.Channel.send({ embeds: [exampleEmbed], files: [file] });
           }
-        }
-      };
+        };
+      }
     } else {
       //Needed to end the Set-Interval (Automated round calls).
-      if(game.intervalId !== null){
+      if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
       }
 
