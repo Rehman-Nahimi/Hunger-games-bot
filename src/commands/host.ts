@@ -125,7 +125,7 @@ async function CollectUsers(
         }))
       );
 
-      TestGame.PrepareGame(players,channel,  5000);
+      TestGame.PrepareGame(players,channel,  1000);
 
       channel.send("The Collection ended");
     });

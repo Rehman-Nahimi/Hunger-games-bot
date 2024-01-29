@@ -31,15 +31,14 @@ class GameClass implements Game {
     if (game.Districts.length > 0) {
       const str = CreateGameHtml(game);
       for (let i = 0; i < str.length; i++) {
-        async () => {
-          const image = await nodeHtmlToImage({
-            html: str[i],
-          });
+        nodeHtmlToImage({
+          html: str[i],
+        }).then((x) => {
+          const test = x as Buffer;
 
-          const test = image as Buffer;
-
-          console.log("This is the then", test);
           if (game.Channel !== null) {
+            game.Channel.send("this is the stream thing now");
+
             const file = new AttachmentBuilder(test);
             const exampleEmbed = new EmbedBuilder()
               .setTitle("Some title")
@@ -47,7 +46,7 @@ class GameClass implements Game {
 
             game.Channel.send({ embeds: [exampleEmbed], files: [file] });
           }
-        };
+        });
       }
     } else {
       //Needed to end the Set-Interval (Automated round calls).

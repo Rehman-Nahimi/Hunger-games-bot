@@ -46,7 +46,7 @@ export function CreateGameHtml(gameInstance: Game): string[] {
     for (let i = 0; i < gameInstance.Districts.length; i++) {
       districtHelper += CreateHtmlDistrict(gameInstance.Districts[i]);
       x++;
-      if (x >= maxDistrict || i >= gameInstance.Districts.length) {
+      if (x >= maxDistrict || i +1 >= gameInstance.Districts.length) {
         const str = template.replace("{0}", districtHelper);
         htmlStrings.push(str);
         x = 0;
