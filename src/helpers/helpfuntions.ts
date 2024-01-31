@@ -2,20 +2,7 @@ import { Game } from "../types/Game";
 import { Player } from "../types/Player";
 import { NewPlayerMap } from "./playerMap";
 
-const playerLimits = [6, 12, 24, 36, 48];
-const playerCounts = playerLimits[Math.floor(Math.random() * playerLimits.length)];
-console.log(playerCounts);
-
-let districtCount = 12;
-
-if (playerCounts <= 12) {
-  districtCount = 6;
-} else  {
-  districtCount = 12; 
-}
-console.log(districtCount);
-
-export function makeid(length: number) {
+export function makeId(length: number) {
   let result = "";
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -28,42 +15,20 @@ export function makeid(length: number) {
   return result;
 }
 
-//Makes the Game
+
 export function MakeGame(totalPlayers: Player[]): Game {
   const game: Game = {
     Districts: [],
-    Channel: null
+    Channel: null,
   };
 
   //Equation for the player per District
- 
-  const playerPerGroup = playerCounts/districtCount;
-  
-  //Extra counter for logic needed
-  let x = 0;
+  const playerPerGroup = NewPlayerMap.FindCorrespondingValue(
+    new NewPlayerMap(),
+    totalPlayers.length
+  );
 
-  //Sets the players to the Districts
-  //here comes the Logic with random Picks
-  for (let i = 0; i < districtCount; i++) {
-    game.Districts.push({ DistNumber: i, Players: [] });
-
-    for (let j = 0; j < playerPerGroup; j++) {
-      game.Districts[i].Players.push(totalPlayers[x]);
-      x++;
-    }
-  }
-
-  return game;
-}
-
-export function MakeGameV2(totalPlayers: Player[]): Game {
-  const game: Game = {
-    Districts: [],
-    Channel: null
-  };
-
-  //Equation for the player per District
-  const playerPerGroup = NewPlayerMap.FindCorrespondingValue(new NewPlayerMap,totalPlayers.length);
+  console.log(playerPerGroup);
 
   //Extra counter for logic needed
   let x = 0;
@@ -72,7 +37,7 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
     if (game.Districts[x] === undefined) {
       game.Districts.push({ DistNumber: x + 1, Players: [] });
     }
-    
+
     if (game.Districts[x].Players.length < playerPerGroup) {
       const index = Math.floor(Math.random() * totalPlayers.length);
       const playerAtIndex = totalPlayers.at(index);
@@ -92,3 +57,4 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
 
   return game;
 }
+

@@ -1,20 +1,23 @@
 import nodeHtmlToImage from "node-html-to-image";
 import { CreateGameHtml } from "../helpers/HtmlFactory";
-import { MakeGameV2 } from "../helpers/helpfuntions";
+import { MakeGame } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { AttachmentBuilder, EmbedBuilder, TextChannel } from "discord.js";
+import { dummies } from "../helpers/dummyPlayers";
 
 class GameClass implements Game {
   Districts: District[] = [];
   Channel: TextChannel | null = null;
 
+  private roundId = 0;
+
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
 
   PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
-    this.Districts = MakeGameV2(players).Districts;
+    this.Districts = MakeGame(dummies).Districts;
     this.Channel = channel;
     this.intervalId = setInterval(
       function (game) {
@@ -47,27 +50,41 @@ class GameClass implements Game {
 
   private static async SendImage(game: Game) {
     const str = CreateGameHtml(game);
-    for (let i = 0; i < str.length; i++) {
-      const image = await nodeHtmlToImage({
-        html: str[i],
-      });
-      const imageBuffer = image as Buffer;
 
-      if (game.Channel !== null) {
+    if (game.Channel !== null) {
+      const exampleEmbeds: EmbedBuilder[] = new Array<EmbedBuilder>(str.length);
+      const myAttachments: AttachmentBuilder[] = new Array<AttachmentBuilder>(
+        str.length
+      );
+
+      for (let i = 0; i < str.length; i++) {
+        const image = await nodeHtmlToImage({
+          html: str[i],
+        });
+        const imageBuffer = image as Buffer;
+
         const exampleEmbed = new EmbedBuilder()
-          .setTitle("Some title")
+          .setTitle(`Round ${(game as GameClass).roundId}`)
           .setColor(0x0099ff);
 
         const myAttachment = new AttachmentBuilder(imageBuffer, {
-          name: "GameBuffer.png",
+          name: `GameBuffer_${i}.png`,
         });
+
         exampleEmbed.setImage(`attachment://${myAttachment.name}`);
-        game.Channel.send({
-          content: "Game Image",
-          embeds: [exampleEmbed],
-          files: [myAttachment],
-        });
+
+        //push to the array examplesEmbeds
+        exampleEmbeds[i] = exampleEmbed;
+        //push to the array myAttachments
+        myAttachments[i] = myAttachment;
       }
+      game.Channel.send({
+        content: "Game Image",
+        embeds: exampleEmbeds,
+        files: myAttachments,
+      });
+
+      (game as GameClass).roundId +=1;
     }
   }
 }
