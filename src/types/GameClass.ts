@@ -5,7 +5,6 @@ import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { AttachmentBuilder, EmbedBuilder, TextChannel } from "discord.js";
-import { channel } from "diagnostics_channel";
 
 class GameClass implements Game {
   Districts: District[] = [];
@@ -27,34 +26,46 @@ class GameClass implements Game {
   }
 
   private PlayGame(game: GameClass): void {
-    //Here out the Logic for the game rounds or start it.
+    // Here out the Logic for the game rounds or start it.
+    // Another way to check if only one player is Alive.
     if (game.Districts.length > 0) {
-      const str = CreateGameHtml(game);
-      for (let i = 0; i < str.length; i++) {
-        nodeHtmlToImage({
-          html: str[i],
-        }).then((x) => {
-          const test = x as Buffer;
+      console.log(`Heres the game ${game}`);
 
-          if (game.Channel !== null) {
-            game.Channel.send("this is the stream thing now");
-
-            const file = new AttachmentBuilder(test);
-            const exampleEmbed = new EmbedBuilder()
-              .setTitle("Some title")
-              .setImage("attachment://discordjs.png");
-
-            game.Channel.send({ embeds: [exampleEmbed], files: [file] });
-          }
-        });
-      }
+      // The async Method Call to not block the Thread.
+      GameClass.SendImage(game);
     } else {
-      //Needed to end the Set-Interval (Automated round calls).
+      // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
       }
 
       console.log("its finished");
+    }
+  }
+
+  private static async SendImage(game: Game) {
+    const str = CreateGameHtml(game);
+    for (let i = 0; i < str.length; i++) {
+      const image = await nodeHtmlToImage({
+        html: str[i],
+      });
+      const imageBuffer = image as Buffer;
+
+      if (game.Channel !== null) {
+        const exampleEmbed = new EmbedBuilder()
+          .setTitle("Some title")
+          .setColor(0x0099ff);
+
+        const myAttachment = new AttachmentBuilder(imageBuffer, {
+          name: "GameBuffer.png",
+        });
+        exampleEmbed.setImage(`attachment://${myAttachment.name}`);
+        game.Channel.send({
+          content: "Game Image",
+          embeds: [exampleEmbed],
+          files: [myAttachment],
+        });
+      }
     }
   }
 }

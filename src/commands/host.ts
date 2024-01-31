@@ -11,7 +11,6 @@ import { client } from "..";
 import ms from "ms";
 import { Player } from "../types/Player";
 import { TestGame } from "../types/GameClass";
-import { url } from "inspector";
 
 export const data = new SlashCommandBuilder()
 
@@ -125,7 +124,7 @@ async function CollectUsers(
         }))
       );
 
-      TestGame.PrepareGame(players,channel,  1000);
+      TestGame.PrepareGame(players,channel,  5000);
 
       channel.send("The Collection ended");
     });
