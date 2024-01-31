@@ -1,5 +1,6 @@
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
+import { NewPlayerMap } from "./playerMap";
 
 const playerLimits = [6, 12, 24, 36, 48];
 const playerCounts = playerLimits[Math.floor(Math.random() * playerLimits.length)];
@@ -31,6 +32,7 @@ export function makeid(length: number) {
 export function MakeGame(totalPlayers: Player[]): Game {
   const game: Game = {
     Districts: [],
+    Channel: null
   };
 
   //Equation for the player per District
@@ -57,10 +59,11 @@ export function MakeGame(totalPlayers: Player[]): Game {
 export function MakeGameV2(totalPlayers: Player[]): Game {
   const game: Game = {
     Districts: [],
+    Channel: null
   };
 
   //Equation for the player per District
-  const playerPerGroup = playerCounts/districtCount;
+  const playerPerGroup = NewPlayerMap.FindCorrespondingValue(new NewPlayerMap,totalPlayers.length);
 
   //Extra counter for logic needed
   let x = 0;
