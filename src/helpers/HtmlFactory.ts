@@ -23,8 +23,7 @@ export function CreateHtmlDistrict(district: District): string {
 
   return result;
 }
-
-const styles = fs.readFileSync("view\\customstyles.css");
+const styles = fs.readFileSync("view/customstyles.css");
 const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
 
 export function CreateGameHtml(gameInstance: Game): string[] {

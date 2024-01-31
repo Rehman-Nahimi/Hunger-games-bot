@@ -33,6 +33,8 @@ class GameClass implements Game {
 
       // The async Method Call to not block the Thread.
       GameClass.SendImage(game);
+
+      game.Districts.splice(0, 1);
     } else {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
