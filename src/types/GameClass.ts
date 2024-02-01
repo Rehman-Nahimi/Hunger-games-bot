@@ -57,12 +57,16 @@ class GameClass implements Game {
   }
 
   private static async SendRoundMessages(game: GameClass, index: number) {
+    //Gets the Strings that need to be converted.
     const str = CreateGameHtml(game);
+
+    //Gets the Converted Picture buffers
     const buffers = await GetPictureBuffer(str);
 
     if (game.Channel !== null ) {
       const message = CreateRoundMessage(buffers, game.roundId);
 
+      //Sends the Feedback to the Server.
       game.Channel.send("----------------------------------------------------");
       game.Channel.send(CreateDieMessage(index+1));
       game.Channel.send(message);

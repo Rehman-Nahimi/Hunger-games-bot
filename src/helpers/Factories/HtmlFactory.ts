@@ -66,6 +66,8 @@ export function CreateDieHTML(game: Game): string []{
 
   const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
 
+
+
   //Empty array for now
   return [];
 }
