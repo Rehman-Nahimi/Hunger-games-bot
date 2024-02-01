@@ -1,11 +1,12 @@
-import nodeHtmlToImage from "node-html-to-image";
-import { CreateGameHtml } from "../helpers/HtmlFactory";
-import { MakeGame } from "../helpers/helpfuntions";
+import { CreateGameHtml } from "../helpers/Factories/HtmlFactory";
+import { GetRandomIndex, MakeGame } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { AttachmentBuilder, EmbedBuilder, TextChannel } from "discord.js";
+import { TextChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
+import { GetPictureBuffer } from "../helpers/Factories/PictureFactory";
+import { CreateDieMessage, CreateRoundMessage } from "../helpers/Factories/MessageFactory";
 
 class GameClass implements Game {
   Districts: District[] = [];
@@ -16,6 +17,9 @@ class GameClass implements Game {
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
 
+  /*
+    Bereite Spiel vor.
+  */
   PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
     this.Districts = MakeGame(dummies).Districts;
     this.Channel = channel;
@@ -32,60 +36,38 @@ class GameClass implements Game {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.Districts.length > 0) {
-      console.log(`Heres the game ${game}`);
+      console.log(`Playing the game with Instance ${game}`);
+
+      //Gets the Index of the Player/District to Die.
+      const tDIndex =GetRandomIndex(game.Districts.length); 
 
       // The async Method Call to not block the Thread.
-      GameClass.SendImage(game);
+      GameClass.SendRoundMessages(game,tDIndex);
 
-      game.Districts.splice(0, 1);
+      //Delete the Player/District from the List.
+      game.Districts.splice(tDIndex, 1);
     } else {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
       }
 
-      console.log("its finished");
+      console.log("🎮 Game Ended !!!!");
     }
   }
 
-  private static async SendImage(game: Game) {
+  private static async SendRoundMessages(game: GameClass, index: number) {
     const str = CreateGameHtml(game);
+    const buffers = await GetPictureBuffer(str);
 
-    if (game.Channel !== null) {
-      const exampleEmbeds: EmbedBuilder[] = new Array<EmbedBuilder>(str.length);
-      const myAttachments: AttachmentBuilder[] = new Array<AttachmentBuilder>(
-        str.length
-      );
+    if (game.Channel !== null ) {
+      const message = CreateRoundMessage(buffers, game.roundId);
 
-      for (let i = 0; i < str.length; i++) {
-        const image = await nodeHtmlToImage({
-          html: str[i],
-        });
-        const imageBuffer = image as Buffer;
-
-        const exampleEmbed = new EmbedBuilder()
-          .setTitle(`Round ${(game as GameClass).roundId}`)
-          .setColor(0x0099ff);
-
-        const myAttachment = new AttachmentBuilder(imageBuffer, {
-          name: `GameBuffer_${i}.png`,
-        });
-
-        exampleEmbed.setImage(`attachment://${myAttachment.name}`);
-
-        //push to the array examplesEmbeds
-        exampleEmbeds[i] = exampleEmbed;
-        //push to the array myAttachments
-        myAttachments[i] = myAttachment;
-      }
-      game.Channel.send({
-        content: "Game Image",
-        embeds: exampleEmbeds,
-        files: myAttachments,
-      });
-
-      (game as GameClass).roundId +=1;
+      game.Channel.send("----------------------------------------------------");
+      game.Channel.send(CreateDieMessage(index+1));
+      game.Channel.send(message);
     }
+    (game as GameClass).roundId += 1;
   }
 }
 

@@ -58,3 +58,6 @@ export function MakeGame(totalPlayers: Player[]): Game {
   return game;
 }
 
+export function GetRandomIndex (maxNumber: number){
+ return Math.floor(Math.random() * maxNumber);
+}

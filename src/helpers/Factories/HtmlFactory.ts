@@ -1,7 +1,11 @@
-import { District } from "../types/District";
-import { Game } from "../types/Game";
-import { NewIntervalMap } from "../helpers/intervalMap";
+import { District } from "../../types/District";
+import { Game } from "../../types/Game";
+import { NewIntervalMap } from "../intervalMap";
 import fs from "fs"; 
+
+const styles = fs.readFileSync("view/customStyles.css");
+const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
+
 
 export function CreateHtmlDistrict(district: District): string {
   let str = "";
@@ -23,11 +27,9 @@ export function CreateHtmlDistrict(district: District): string {
 
   return result;
 }
-const styles = fs.readFileSync("view/customStyles.css");
-const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
 
 export function CreateGameHtml(gameInstance: Game): string[] {
-  //
+  //Creates an Empty Array to fill with the Strings representing the HTMLs.
   const htmlStrings: string[] = [];
 
   if (
@@ -42,6 +44,7 @@ export function CreateGameHtml(gameInstance: Game): string[] {
 
     let districtHelper = "";
     let x = 0;
+
     for (let i = 0; i < gameInstance.Districts.length; i++) {
       districtHelper += CreateHtmlDistrict(gameInstance.Districts[i]);
       x++;
@@ -55,4 +58,14 @@ export function CreateGameHtml(gameInstance: Game): string[] {
   }
 
   return htmlStrings;
+}
+
+
+export function CreateDieHTML(game: Game): string []{
+  //Create the HTML for the Dead Players.
+
+  const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
+
+  //Empty array for now
+  return [];
 }
