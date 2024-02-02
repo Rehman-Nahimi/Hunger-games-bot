@@ -109,8 +109,11 @@ export function MakeGameV3(playerCount: number): Game {
     for (let j = 0; j < playerPerGroup; j++) {
       const playerAtIndex: Player = {
         IsAlive: true,
+        District: 1,
         Name: makeid(8), // or use makeid(NAME_LENGTHS)
         Url: makeid(24),
+        SurvivalRate: 1,
+        Death: 0,
       };
       game.Districts[i].Players.push(playerAtIndex);
     }
@@ -118,30 +121,75 @@ export function MakeGameV3(playerCount: number): Game {
   return game;
 }
 
-export function Die() {
-  let result: boolean;
-  const randomInt = () =>
-  Math.floor(Math.random() * (100));
-  if (randomInt() >= 45) {
-    result = true
-  } else {
-    result = false
-  }
+// export function Die() {
+//   let result: boolean;
 
-  return result;
-}
+//   const randomInt = () =>
+//   Math.floor(Math.random() * (10));
+
+//   switch(randomInt()) {
+
+//     case 1:
+//       break;
+//     case 2:
+//       break;
+//     case 3:
+
+
+//       break;
+
+//     case 4:
+
+
+//       break;
+
+//     case 5:
+//       result = false
+//       break;
+      
+//   }
+  
+
+//   return result;
+// }
 
 export function RoundGenerator(totalPlayers:Player[]): Round {
   const round: Round = {
     Players: [],
   };
+
+  const randomInt = () =>
+  Math.floor(Math.random() * (10));
+
   round.Players = totalPlayers.filter((player) => player.IsAlive == true)
+
   console.table(round.Players)
+
   const playerCount = round.Players.length
   
   for (let j = 0; j < playerCount; j++) {
-    round.Players[j].IsAlive = Die();
+    switch(randomInt()) {
+
+      case 1:
+        round.Players[j].IsAlive = false
+        break;
+      case 2:
+        
+        break;
+      case 3:
+  
+  
+        break;
+      case 4:
+  
+  
+        break;
+      case 5:
+        
+        break;
+    }
     
+    //round.Players[j].IsAlive = Die();
 }
 console.table(round.Players)
   return round;

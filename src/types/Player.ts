@@ -6,4 +6,6 @@ export interface Player {
     Url: string, 
 
     IsAlive: boolean,
+
+    SurvivalRate: 1,
 }
