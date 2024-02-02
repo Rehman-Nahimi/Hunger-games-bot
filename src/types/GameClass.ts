@@ -1,9 +1,12 @@
-import { CreateGameHtml } from "../helpers/Factories/HtmlFactory";
+import {
+  CreateDieHTML,
+  CreateGameHtml,
+} from "../helpers/Factories/HtmlFactory";
 import { GetRandomIndex, MakeGame } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { TextChannel, flatten } from "discord.js";
+import { TextChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
 import { GetPictureBuffer } from "../helpers/Factories/PictureFactory";
 import {
@@ -76,26 +79,39 @@ class GameClass implements Game {
       game.Channel.send("----------------------------------------------------");
       // game.Channel.send(CreateDieMessage(index + 1));
       game.Channel.send(message);
+
+      //Sends the Feedback to the Server.
+      game.Channel.send("----------------------------------------------------");
+
+      //Gets the Strings that need to be converted.
+      const dieHTML = CreateDieHTML(game);
+
+      console.log(dieHTML);
+
+      //Gets the Converted Picture buffers
+      const dieBuffer = await GetPictureBuffer(dieHTML);
+      const dieMessage = CreateDieMessage(dieBuffer);
+
+      game.Channel.send(dieMessage);
     }
     (game as GameClass).roundId += 1;
   }
 
   private static LetPlayersDie(game: Game) {
-    
     //Goes Trough each District to then look if someone Dies.
     for (let i = 0; i < game.Districts.length; i++) {
       //Decider if theres a person to Die and picks the person.
       const probability = GetRandomIndex(10);
-      if (probability < 1) {
+      if (probability < 4) {
         const index = GetRandomIndex(game.Districts[i].Players.length);
 
         game.Districts[i].Players[index].IsAlive = false;
       }
 
       //Filters so we get the Amount of Alive people
-      const aliveCount = (game.Districts[i].Players.filter((x)=> 
-        x.IsAlive == true
-      )).length;
+      const aliveCount = game.Districts[i].Players.filter(
+        (x) => x.IsAlive == true
+      ).length;
 
       //If the alive Count is 0 then we can delete that District.
       if (aliveCount === 0) {
