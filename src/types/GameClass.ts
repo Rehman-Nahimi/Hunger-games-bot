@@ -93,9 +93,9 @@ class GameClass implements Game {
       }
 
       //Filters so we get the Amount of Alive people
-      const aliveCount = game.Districts[i].Players.filter((x) => {
-        x.IsAlive === true;
-      }).length;
+      const aliveCount = (game.Districts[i].Players.filter((x)=> 
+        x.IsAlive == true
+      )).length;
 
       //If the alive Count is 0 then we can delete that District.
       if (aliveCount === 0) {
