@@ -1,11 +1,11 @@
+import { DefaultDeserializer } from "v8";
 import { District } from "../../types/District";
 import { Game } from "../../types/Game";
 import { NewIntervalMap } from "../intervalMap";
-import fs from "fs"; 
+import fs from "fs";
 
 const styles = fs.readFileSync("view/customStyles.css");
 const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
-
 
 export function CreateHtmlDistrict(district: District): string {
   let str = "";
@@ -28,15 +28,12 @@ export function CreateHtmlDistrict(district: District): string {
   return result;
 }
 
-export function CreateGameHtml(gameInstance: Game): string[] {
+export function CreateGameHtml(game: Game): string[] {
   //Creates an Empty Array to fill with the Strings representing the HTMLs.
   const htmlStrings: string[] = [];
 
-  if (
-    gameInstance.Districts.length > 0 &&
-    gameInstance.Districts[0].Players.length > 0
-  ) {
-    const amountOfPlayer = gameInstance.Districts[0].Players.length;
+  if (game.Districts.length > 0 && game.Districts[0].Players.length > 0) {
+    const amountOfPlayer = game.Districts[0].Players.length;
     const maxDistrict = NewIntervalMap.FindCorrespondingValue(
       new NewIntervalMap(),
       amountOfPlayer
@@ -45,10 +42,10 @@ export function CreateGameHtml(gameInstance: Game): string[] {
     let districtHelper = "";
     let x = 0;
 
-    for (let i = 0; i < gameInstance.Districts.length; i++) {
-      districtHelper += CreateHtmlDistrict(gameInstance.Districts[i]);
+    for (let i = 0; i < game.Districts.length; i++) {
+      districtHelper += CreateHtmlDistrict(game.Districts[i]);
       x++;
-      if (x >= maxDistrict || i +1 >= gameInstance.Districts.length) {
+      if (x >= maxDistrict || i + 1 >= game.Districts.length) {
         const str = template.replace("{0}", districtHelper);
         htmlStrings.push(str);
         x = 0;
@@ -60,14 +57,54 @@ export function CreateGameHtml(gameInstance: Game): string[] {
   return htmlStrings;
 }
 
-
-export function CreateDieHTML(game: Game): string []{
+const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
+export function CreateDieHTML(game: Game): string[] {
   //Create the HTML for the Dead Players.
+  const htmlStrings: string[] = [];
 
-  const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
+  if (game.Districts.length > 0 && game.Districts[0].Players.length > 0) {
+    const amountOfPlayer = game.Districts[0].Players.length;
+    const maxDistrict = NewIntervalMap.FindCorrespondingValue(
+      new NewIntervalMap(),
+      amountOfPlayer
+    );
 
+    let districtHelper = DieTitel;
+    let x = 0;
 
-
-  //Empty array for now
+    for (let i = 0; i < game.Districts.length; i++) {
+      districtHelper += CreateDieDistrict(game.Districts[i]);
+      x++;
+      if (x >= maxDistrict || i + 1 >= game.Districts.length) {
+        const str = template.replace("{0}", districtHelper);
+        htmlStrings.push(str);
+        x = 0;
+        districtHelper = "";
+      }
+    }
+  }
   return [];
+}
+
+function CreateDieDistrict(district: District): string {
+  let str = "";
+
+  for (let i = 0; i < district.Players.length; i++) {
+    str += ` <div>
+        <h2>${district.Players[i].Name}</h2>
+        <div class="${district.Players[i].IsAlive !== true? "dead-player": ""}">
+        <img  src="${district.Players[i].Url}" alt="${district.Players[i].Url}">
+        </div>
+      </div>`;
+  }
+
+  const result = ` <div>
+  <h1>District ${district.DistNumber}  </h1>
+
+  <div class="picture-container">
+      ${str}
+  </div>
+    </div>`;
+
+  return result;
 }
