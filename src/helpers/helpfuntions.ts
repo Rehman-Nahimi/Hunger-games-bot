@@ -167,6 +167,13 @@ export function RoundGenerator(totalPlayers:Player[]): Round {
 
   const playerCount = round.Players.length
   
+  function CheckDeath() {
+    let result: boolean;
+
+    
+  }
+
+
   for (let j = 0; j < playerCount; j++) {
     switch(randomInt()) {
 
@@ -177,11 +184,11 @@ export function RoundGenerator(totalPlayers:Player[]): Round {
         round.Players[j].SurvivalRate -= 0.35
         break;
       case 3:
-  
+        round.Players[j].SurvivalRate += 0.35
   
         break;
       case 4:
-  
+        round.Players[j].SurvivalRate += 0.55
   
         break;
       case 5:
