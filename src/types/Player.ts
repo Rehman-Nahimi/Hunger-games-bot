@@ -7,5 +7,8 @@ export interface Player {
 
     IsAlive: boolean,
 
-    SurvivalRate: 1,
+    SurvivalRate: number,
+
+    Death: number,
+    
 }

@@ -174,7 +174,7 @@ export function RoundGenerator(totalPlayers:Player[]): Round {
         round.Players[j].IsAlive = false
         break;
       case 2:
-        
+        round.Players[j].SurvivalRate -= 0.35
         break;
       case 3:
   
