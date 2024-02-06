@@ -171,3 +171,7 @@ export function RoundGenerator(totalPlayers: Player[]): Round {
   console.table(round.Players);
   return round;
 }
+
+export function GetRandomIndex(maxNumber: number) {
+  return Math.floor(Math.random() * maxNumber);
+}
