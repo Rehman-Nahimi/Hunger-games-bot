@@ -9,6 +9,7 @@ const testDist: District = {
   DistNumber: 1,
   Players: [
     {
+      District: 1
       IsAlive: true,
       Name: "dragon",
       Url: "https://cdn.discordapp.com/avatars/262185111955570689/d0ba1fac2d11e986cbbff972391b9639.webp?quality=lossless&size=4096",

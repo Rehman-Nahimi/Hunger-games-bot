@@ -1,4 +1,5 @@
 export interface Player {
+
     District: number,
     
     Name: string, 
@@ -7,8 +8,8 @@ export interface Player {
 
     IsAlive: boolean,
 
-    SurvivalRate: number,
-
-    Death: number,
+    SurvivalRate: 1,
     
+    Scenario: number,
+
 }

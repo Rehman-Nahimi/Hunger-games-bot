@@ -1,3 +1,4 @@
+import { checkPrime } from "crypto";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
 import { Round } from "../types/Round";
@@ -121,37 +122,25 @@ export function MakeGameV3(playerCount: number): Game {
   return game;
 }
 
-// export function Die() {
-//   let result: boolean;
 
-//   const randomInt = () =>
-//   Math.floor(Math.random() * (10));
+function CheckDeath(player:Player) {
+  let result: boolean;
 
-//   switch(randomInt()) {
-
-//     case 1:
-//       break;
-//     case 2:
-//       break;
-//     case 3:
-
-
-//       break;
-
-//     case 4:
-
-
-//       break;
-
-//     case 5:
-//       result = false
-//       break;
-      
-//   }
+  const randomInt = () =>
+  Math.floor(Math.random() * (100));
   
+  let number = player.SurvivalRate
+  
+  let answer = randomInt() * number
 
-//   return result;
-// }
+  if(number < 45){
+    player.Scenario = 1
+    return false; 
+    }
+    return true; 
+
+  
+}
 
 export function RoundGenerator(totalPlayers:Player[]): Round {
   const round: Round = {
@@ -166,37 +155,33 @@ export function RoundGenerator(totalPlayers:Player[]): Round {
   console.table(round.Players)
 
   const playerCount = round.Players.length
-  
-  function CheckDeath() {
-    let result: boolean;
-
-    
-  }
-
 
   for (let j = 0; j < playerCount; j++) {
+
     switch(randomInt()) {
 
       case 1:
         round.Players[j].IsAlive = false
+        round.Players[j].Scenario = 1
         break;
       case 2:
         round.Players[j].SurvivalRate -= 0.35
+        round.Players[j].Scenario = 2
         break;
       case 3:
         round.Players[j].SurvivalRate += 0.35
-  
+        round.Players[j].Scenario = 3
         break;
       case 4:
         round.Players[j].SurvivalRate += 0.55
-  
+        round.Players[j].Scenario = 4
         break;
       case 5:
-        
+        round.Players[j].Scenario = 5
         break;
     }
     
-    //round.Players[j].IsAlive = Die();
+    round.Players[j].IsAlive = CheckDeath(round.Players[j]);
 }
 console.table(round.Players)
   return round;
