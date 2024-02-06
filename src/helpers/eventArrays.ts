@@ -31,7 +31,7 @@ export const miscScenario = new MiscScenario([
   "{0} hides away in the trees",
 ]);
 
-export const deathScenario = new MiscScenario([
+export const deathScenario = new DeathScenario([
   "{0} fell over and hit their head on a rock.",
   "Lions corner {0}. He is bitten into viciously",
   "{0} dies by dehydration",
