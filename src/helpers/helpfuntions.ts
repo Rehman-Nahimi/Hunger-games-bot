@@ -2,7 +2,7 @@ import { checkPrime } from "crypto";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
 import { Round } from "../types/Round";
-import { FindCorrespondingValue} from "./playerMap";
+import { FindCorrespondingValue } from "./playerMap";
 
 const playerLimits = [6, 12, 24, 36, 48];
 const playerCounts =
@@ -63,10 +63,10 @@ export function MakeGameV2(totalPlayers: Player[]): Game {
 
   //Equation for the player per Districtfilter
   const playerPerGroup = 2;
-  
+
   //Extra counter for logic needed
   let x = 0;
-  
+
   while (totalPlayers.length > 0) {
     if (game.Districts[x] === undefined) {
       game.Districts.push({ DistNumber: x + 1, Players: [] });
@@ -121,68 +121,53 @@ export function MakeGameV3(playerCount: number): Game {
   }
   return game;
 }
+const randomInt100 = () => Math.floor(Math.random() * 100);
 
+function CheckDeath(player: Player) {
+  const dieIndex = randomInt100() * player.SurvivalRate;
 
-function CheckDeath(player:Player) {
-  let result: boolean;
-
-  const randomInt = () =>
-  Math.floor(Math.random() * (100));
-  
-  let number = player.SurvivalRate
-  
-  let answer = randomInt() * number
-
-  if(number < 45){
-    player.Scenario = 1
-    return false; 
-    }
-    return true; 
-
-  
+  if (dieIndex < 20) {
+    player.Scenario = 1;
+    return false;
+  }
+  return true;
 }
 
-export function RoundGenerator(totalPlayers:Player[]): Round {
+const randomInt = () => Math.floor(Math.random() * 10);
+export function RoundGenerator(totalPlayers: Player[]): Round {
   const round: Round = {
     Players: [],
   };
 
-  const randomInt = () =>
-  Math.floor(Math.random() * (10));
+  round.Players = totalPlayers.filter((player) => player.IsAlive == true);
 
-  round.Players = totalPlayers.filter((player) => player.IsAlive == true)
-
-  console.table(round.Players)
-
-  const playerCount = round.Players.length
+  const playerCount = round.Players.length;
 
   for (let j = 0; j < playerCount; j++) {
-
-    switch(randomInt()) {
-
+    const randomX = randomInt();
+    switch (randomX) {
       case 1:
-        round.Players[j].IsAlive = false
-        round.Players[j].Scenario = 1
+        round.Players[j].IsAlive = false;
+        round.Players[j].Scenario = 1;
         break;
       case 2:
-        round.Players[j].SurvivalRate -= 0.35
-        round.Players[j].Scenario = 2
+        round.Players[j].SurvivalRate -= 0.35;
+        round.Players[j].Scenario = 2;
         break;
       case 3:
-        round.Players[j].SurvivalRate += 0.35
-        round.Players[j].Scenario = 3
+        round.Players[j].SurvivalRate += 0.35;
+        round.Players[j].Scenario = 3;
         break;
       case 4:
-        round.Players[j].SurvivalRate += 0.55
-        round.Players[j].Scenario = 4
+        round.Players[j].SurvivalRate += 0.55;
+        round.Players[j].Scenario = 4;
         break;
-      case 5:
-        round.Players[j].Scenario = 5
+      default:
+        round.Players[j].Scenario = 5;
         break;
     }
-    
     round.Players[j].IsAlive = CheckDeath(round.Players[j]);
-}
-console.table(round.Players)
+  }
+  console.table(round.Players);
   return round;
 }
