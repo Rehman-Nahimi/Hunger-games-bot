@@ -1,5 +1,7 @@
 import { District } from "./District";
 
-export interface Game {
+export interface Round {
     Districts : District[],
+
+    RounNumber: number,
 }

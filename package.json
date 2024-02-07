@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "discord.js": "^14.7.1",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "node-html-to-image": "^4.0.0"
   },
   "devDependencies": {
     "@types/ms": "^0.7.34",

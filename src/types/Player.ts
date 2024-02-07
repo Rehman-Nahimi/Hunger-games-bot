@@ -1,8 +1,9 @@
 export interface Player {
+  Name: string;
 
-    Name: string, 
+  Url: string;
 
-    Url: string, 
+  IsAlive: boolean;
 
-    IsAlive: boolean,
+  Events: string[];
 }

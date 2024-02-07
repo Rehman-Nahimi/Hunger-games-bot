@@ -10,6 +10,7 @@ import {
 import { client } from "..";
 import ms from "ms";
 import { Player } from "../types/Player";
+import { GameClass } from "../types/GameClass";
 
 export const data = new SlashCommandBuilder()
 
@@ -107,25 +108,19 @@ async function CollectUsers(
       //Create the Players from the
       const players: Player[] = [];
       userIds?.forEach((x) => {
-        const avaUrl = x.avatarURL();
+        const urlStr = x.avatarURL();
 
-        if (avaUrl !== null) {
-          players.push({
-            IsAlive: true,
-            Name: x.username,
-            Url: avaUrl,
-          });
-        }
+        players.push({
+          IsAlive: true,
+          Name: x.username,
+          Url: urlStr !== null ? urlStr : "",
+          Events: [],
+        });
       });
-
-      console.table(
-        players.map((x) => ({
-          Name_Player: x.Name,
-          Url_player_pic: x.Url,
-        }))
-      );
-
       channel.send("The Collection ended");
+
+      const myGame = new GameClass();
+      myGame.PrepareGame(players, channel, 5000);
     });
   });
 }
