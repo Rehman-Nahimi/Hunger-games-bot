@@ -3,6 +3,7 @@ import { Game } from "../../types/Game";
 import { NewIntervalMap } from "../intervalMap";
 import fs from "fs";
 import { FilterDistForDead } from "../helpfuntions";
+import { GameClass } from "../../types/GameClass";
 
 const styles = fs.readFileSync("view/customStyles.css");
 const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
@@ -63,8 +64,11 @@ const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
 export function CreateDieHTML(game: Game): string[] {
   //Create the HTML for the Dead Players.
   const htmlStrings: string[] = [];
+  const gamooo = game as GameClass;
 
-  const listOfDist: District[] = FilterDistForDead(game.Districts);
+  const listOfDist: District[] = FilterDistForDead(
+    game.Rounds[gamooo.roundId - 1].Districts
+  );
 
   if (listOfDist.length > 0 && listOfDist[0].Players.length > 0) {
     const amountOfPlayer = listOfDist[0].Players.length;
@@ -114,4 +118,3 @@ function CreateDieDistrict(district: District): string {
 
   return result;
 }
-

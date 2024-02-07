@@ -13,12 +13,15 @@ import {
   CreateDieMessage,
   CreateRoundMessage,
 } from "../helpers/Factories/MessageFactory";
+import { deathScenario } from "../helpers/eventArrays";
+import { Round } from "./Round";
 
-class GameClass implements Game {
+export class GameClass implements Game {
   Districts: District[] = [];
   Channel: TextChannel | null = null;
-
-  private roundId = 0;
+  Rounds: Round[] = [];
+  private playersAlive = 0;
+  public roundId = 0;
 
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
@@ -27,7 +30,19 @@ class GameClass implements Game {
     Bereite Spiel vor.
   */
   PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
-    this.Districts = MakeGame(dummies).Districts;
+    const playDumm: Player[] = [];
+
+    dummies.forEach((element) => {
+      playDumm.push({
+        Events: [],
+        IsAlive: element.IsAlive,
+        Name: element.Name,
+        Url: element.Url,
+      });
+    });
+
+    this.playersAlive = playDumm.length;
+    this.Districts = MakeGame(playDumm).Districts;
     this.Channel = channel;
     this.intervalId = setInterval(
       function (game) {
@@ -38,11 +53,11 @@ class GameClass implements Game {
     );
   }
 
-  private PlayGame(game: GameClass): void {
+  private async PlayGame(game: GameClass): Promise<void> {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
-    if (game.Districts.length > 0) {
-      console.log(`Playing the game with Instance ${game}`);
+    if (this.playersAlive > 1) {
+      console.log(`Playing the game with Instance ${game} ${game.roundId}`);
 
       // //Gets the Index of the Player/District to Die.
       // const tDIndex = GetRandomIndex(game.Districts.length);
@@ -51,7 +66,7 @@ class GameClass implements Game {
       GameClass.LetPlayersDie(game);
 
       // The async Method Call to not block the Thread.
-      GameClass.SendRoundMessages(game);
+      await GameClass.SendRoundMessages(game);
 
       // //Delete the Player/District from the List.
       // game.Districts.splice(tDIndex, 1);
@@ -86,28 +101,50 @@ class GameClass implements Game {
       //Gets the Strings that need to be converted.
       const dieHTML = CreateDieHTML(game);
 
-      console.log(dieHTML);
-
       //Gets the Converted Picture buffers
       const dieBuffer = await GetPictureBuffer(dieHTML);
       const dieMessage = CreateDieMessage(dieBuffer);
 
       game.Channel.send(dieMessage);
     }
-    (game as GameClass).roundId += 1;
   }
 
   private static LetPlayersDie(game: Game) {
     //Goes Trough each District to then look if someone Dies.
+    const gamooo = game as GameClass;
+    game.Rounds.push({ Districts: [], RounNumber: gamooo.roundId });
     for (let i = 0; i < game.Districts.length; i++) {
       //Decider if theres a person to Die and picks the person.
       const probability = GetRandomIndex(10);
-      if (probability < 4) {
+      if (probability < 4 && gamooo.playersAlive > 1) {
         const index = GetRandomIndex(game.Districts[i].Players.length);
 
-        game.Districts[i].Players[index].IsAlive = false;
+        if (game.Districts[i].Players.length !== 0) {
+          game.Districts[i].Players[index].IsAlive = false;
+          game.Districts[i].Players[index].Events.push(
+            deathScenario.GetScenario(game.Districts[i].Players[index])
+          );
+        }
       }
+    }
 
+    for (let i = 0; i < game.Districts.length; i++) {
+      const players = game.Districts[i].Players.filter((x) => !x.IsAlive);
+      if (players.length > 0) {
+        game.Rounds[gamooo.roundId].Districts.push({
+          DistNumber: game.Districts[i].DistNumber,
+          Players: players,
+        });
+
+        for (let index = 0; index < players.length; index++) {
+          const delIndex = game.Districts[i].Players.indexOf(players[index]);
+
+          if (delIndex !== -1) {
+            game.Districts[i].Players.splice(delIndex, 1);
+            gamooo.playersAlive = gamooo.playersAlive - 1;
+          }
+        }
+      }
       //Filters so we get the Amount of Alive people
       const aliveCount = game.Districts[i].Players.filter(
         (x) => x.IsAlive == true
@@ -118,8 +155,8 @@ class GameClass implements Game {
         game.Districts.splice(i, 1);
       }
     }
+
+    console.log(`Number of Player alive${gamooo.playersAlive}`);
+    gamooo.roundId++;
   }
 }
-
-export const TestGame = new GameClass();
-

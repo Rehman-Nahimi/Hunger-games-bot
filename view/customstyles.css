@@ -29,8 +29,19 @@ div.picture-container {
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: flex-start;
+  margin: 0;
 }
 
 div.dead-player > img{
     filter: grayscale(100%); /* Apply full grayscale effect when character is dead */
+}
+
+div.DistContainer{
+  margin-top: 20px;
+}
+
+h1.dist{
+  margin: 0;
+  margin-top: 30px;
+  text-decoration: underline;
 }

@@ -10,7 +10,7 @@ import {
 import { client } from "..";
 import ms from "ms";
 import { Player } from "../types/Player";
-import { TestGame } from "../types/GameClass";
+import { GameClass } from "../types/GameClass";
 
 export const data = new SlashCommandBuilder()
 
@@ -114,19 +114,13 @@ async function CollectUsers(
           IsAlive: true,
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
+          Events: [],
         });
       });
-
-      console.table(
-        players.map((x) => ({
-          Name_Player: x.Name,
-          Url_player_pic: x.Url,
-        }))
-      );
-
-      TestGame.PrepareGame(players,channel,  5000);
-
       channel.send("The Collection ended");
+
+      const myGame = new GameClass();
+      myGame.PrepareGame(players, channel, 5000);
     });
   });
 }

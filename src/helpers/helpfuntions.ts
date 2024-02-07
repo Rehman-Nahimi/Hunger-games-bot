@@ -20,6 +20,7 @@ export function MakeGame(totalPlayers: Player[]): Game {
   const game: Game = {
     Districts: [],
     Channel: null,
+    Rounds: [],
   };
 
   //Equation for the player per District
@@ -27,8 +28,6 @@ export function MakeGame(totalPlayers: Player[]): Game {
     new NewPlayerMap(),
     totalPlayers.length
   );
-
-  console.log(playerPerGroup);
 
   //Extra counter for logic needed
   let x = 0;
@@ -75,4 +74,3 @@ export function FilterDistForDead(districts: District[]) {
   }
   return result;
 }
-
