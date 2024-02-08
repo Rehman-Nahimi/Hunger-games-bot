@@ -24,7 +24,7 @@ class MiscScenario extends BaseScenario {
 export const miscScenario = new MiscScenario([
   "{0} hunts fish",
   "{0} avoids a pack of lions",
-  "{0} hides away in the trees",
+  "{0} hides away in the trees ",
 ]);
 
 export const deathScenario = new MiscScenario([
