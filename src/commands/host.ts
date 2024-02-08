@@ -115,6 +115,7 @@ async function CollectUsers(
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
           Events: [],
+          SurvivalRate: 1
         });
       });
       channel.send("The Collection ended");

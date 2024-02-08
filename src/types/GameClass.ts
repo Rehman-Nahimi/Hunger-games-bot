@@ -13,7 +13,7 @@ import {
   CreateDieMessage,
   CreateRoundMessage,
 } from "../helpers/Factories/MessageFactory";
-import { deathScenario } from "../helpers/eventArrays";
+import { deathScenario, miscScenario } from "../helpers/eventArrays";
 import { Round } from "./Round";
 
 export class GameClass implements Game {
@@ -38,6 +38,7 @@ export class GameClass implements Game {
         IsAlive: element.IsAlive,
         Name: element.Name,
         Url: element.Url,
+        SurvivalRate: 1,
       });
     });
 
@@ -62,8 +63,20 @@ export class GameClass implements Game {
       // //Gets the Index of the Player/District to Die.
       // const tDIndex = GetRandomIndex(game.Districts.length);
 
+      for (let I = 0; I < game.Districts.length; I++) {
+        const element = game.Districts[I];
+        for (let j = 0; j < element.Players.length; j++) {
+          const player = element.Players[j];
+          player.Events.push(miscScenario.GetScenario(player));
+        }
+      }
+
+      //picture event
+
       //Lets People Die.
       GameClass.LetPlayersDie(game);
+
+      //picture dies
 
       // The async Method Call to not block the Thread.
       await GameClass.SendRoundMessages(game);
