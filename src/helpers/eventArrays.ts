@@ -19,11 +19,7 @@ class MiscScenario extends BaseScenario {
   }
 }
 
-class DeathScenario extends BaseScenario {
-  constructor(scenarios: string[]) {
-    super(scenarios);
-  }
-}
+
 
 export const miscScenario = new MiscScenario([
   "{0} hunts fish",
