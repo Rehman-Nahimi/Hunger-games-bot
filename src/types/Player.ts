@@ -5,5 +5,7 @@ export interface Player {
 
   IsAlive: boolean;
 
+  SurvivalRate: number;
+
   Events: string[];
 }
