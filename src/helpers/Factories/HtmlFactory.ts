@@ -94,6 +94,37 @@ export function CreateDieHTML(game: Game): string[] {
   return htmlStrings;
 }
 
+export function CreateRoundHtml(game: Game): string[] {
+  //Creates an Empty Array to fill with the Strings representing the HTMLs.
+  const htmlStrings: string[] = [];
+
+  if (game.Districts.length > 0 && game.Districts[0].Players.length > 0) {
+    const amountOfPlayer = game.Districts[0].Players.length;
+    const maxDistrict = NewIntervalMap.FindCorrespondingValue(
+      new NewIntervalMap(),
+      amountOfPlayer
+    );
+
+    let districtHelper = "";
+    let x = 0;
+
+    for (let i = 0; i < game.Districts.length; i++) {
+      districtHelper += CreateHtmlDistrict(game.Districts[i]);
+      x++;
+      if (x >= maxDistrict || i + 1 >= game.Districts.length) {
+        const str = template.replace("{0}", districtHelper);
+        htmlStrings.push(str);
+        x = 0;
+        districtHelper = "";
+      }
+    }
+  }
+
+  return htmlStrings;
+}
+
+
+
 function CreateDieDistrict(district: District): string {
   let str = "";
 
