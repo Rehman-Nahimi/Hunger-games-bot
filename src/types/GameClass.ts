@@ -6,7 +6,7 @@ import { GetRandomIndex, MakeGame } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { TextChannel } from "discord.js";
+import { TextBasedChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
 import { GetPictureBuffer } from "../helpers/Factories/PictureFactory";
 import {
@@ -15,21 +15,19 @@ import {
 } from "../helpers/Factories/MessageFactory";
 import { deathScenario, miscScenario } from "../helpers/eventArrays";
 import { Round } from "./Round";
+import { SendMessage } from "../helpers/messageHandler";
 
 export class GameClass implements Game {
-  Districts: District[] = [];
-  Channel: TextChannel | null = null;
-  Rounds: Round[] = [];
-  private playersAlive = 0;
-  public roundId = 0;
+  Districts: District[];
+  Channel: TextBasedChannel ;
+  Rounds: Round[];
+  private playersAlive;
+  public roundId;
 
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
 
-  /*
-    Bereite Spiel vor.
-  */
-  PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
+  constructor(players: Player[], channel: TextBasedChannel){
     const playDumm: Player[] = [];
 
     dummies.forEach((element) => {
@@ -42,9 +40,16 @@ export class GameClass implements Game {
       });
     });
 
+    this.roundId = 0;
     this.playersAlive = playDumm.length;
     this.Districts = MakeGame(playDumm).Districts;
     this.Channel = channel;
+    this. Rounds = []; 
+  }
+  /*
+    Bereite Spiel vor.
+  */
+  PrepareGame(intervalTime = 5000) {
     this.intervalId = setInterval(
       function (game) {
         game.PlayGame(game);
@@ -87,6 +92,7 @@ export class GameClass implements Game {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
+        game.intervalId = null; 
       }
 
       console.log("🎮 Game Ended !!!!");
@@ -104,12 +110,13 @@ export class GameClass implements Game {
       const message = CreateRoundMessage(buffers, game.roundId);
 
       //Sends the Feedback to the Server.
-      game.Channel.send("----------------------------------------------------");
+      SendMessage(game.Channel, "----------------------------------------------------");
       // game.Channel.send(CreateDieMessage(index + 1));
-      game.Channel.send(message);
+      SendMessage(game.Channel, message);
 
+      
       //Sends the Feedback to the Server.
-      game.Channel.send("----------------------------------------------------");
+      SendMessage(game.Channel, "----------------------------------------------------");
 
       //Gets the Strings that need to be converted.
       const dieHTML = CreateDieHTML(game);
@@ -118,7 +125,7 @@ export class GameClass implements Game {
       const dieBuffer = await GetPictureBuffer(dieHTML);
       const dieMessage = CreateDieMessage(dieBuffer);
 
-      game.Channel.send(dieMessage);
+      SendMessage(game.Channel, dieMessage);
     }
   }
 

@@ -39,3 +39,31 @@ export const deathScenario = new SingleScenario([
   "{0} accidentally cuts himself and gets infected. ",
   "{0} bleeds out due to untreated wounds",
 ]);
+
+
+export const injuryScenario = new SingleScenario([
+  "{0} loses leg to a man eating monkey.",
+  "{0} falls over and gets a concussion",
+  "{0} touches a poisonous flower",
+  "{0} is bit by a rare spider species ",
+  "{0} catches a very bad illness",
+]);
+
+export const lightInjuryScenario = new SingleScenario([
+  "{0} sprains ankle while tripping up thinking about their crush",
+  "{0} pulls a leg while running ",
+  "{0} injures his shoulder lifting heavy objects",
+]);
+
+export const lightBuffScenario = new SingleScenario([
+  "{0} finds old tools in a cave",
+  "{0} is given water and bandages from a sponsor",
+  "{0} finds rabbits to hunt and eat",
+  "{0} wakes up from a nap about his crush, they feel energetic",
+]);
+
+export const buffScenario = new SingleScenario([
+  "{0} finds a gun with 3 bullets",
+  "{0} is given a medkit from a sponsor ",
+  "{0} steals another parties food and supplies",
+]);

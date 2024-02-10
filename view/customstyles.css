@@ -29,6 +29,14 @@ img {
 }
 
 div.picture-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: 50px;
+}
+
+div.picture-containerRound{
   margin-top: 50px;
 }
 

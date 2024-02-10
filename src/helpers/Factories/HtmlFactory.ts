@@ -139,7 +139,7 @@ export function CreateRoundHtml(game: Game): string[] {
         x++;
 
         if (x >= maxPlayer || i + 1 >= game.Rounds[gamooo.roundId].Districts.length) {
-          const result = `<div>  <div class="picture-container"> ${districtHelper}  </div> </div>`; 
+          const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`; 
           const str = template.replace("{0}", result);
           htmlStrings.push(str);
           x = 0;
