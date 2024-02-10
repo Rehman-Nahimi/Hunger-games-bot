@@ -132,7 +132,7 @@ export class GameClass implements Game {
   private static LetPlayersDie(game: Game) {
     //Goes Trough each District to then look if someone Dies.
     const gamooo = game as GameClass;
-    game.Rounds.push({ Districts: [], RounNumber: gamooo.roundId });
+    game.Rounds.push({ Districts: [], RoundNumber: gamooo.roundId });
     for (let i = 0; i < game.Districts.length; i++) {
       //Decider if theres a person to Die and picks the person.
       const probability = GetRandomIndex(10);

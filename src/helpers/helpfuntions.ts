@@ -1,6 +1,10 @@
 import { District } from "../types/District";
+import { Events, EzMapSzenario, randomEnum } from "../types/EventEnum";
 import { Game } from "../types/Game";
+import { GameClass } from "../types/GameClass";
 import { Player } from "../types/Player";
+import { Round } from "../types/Round";
+import { deathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
 export function makeId(length: number) {
@@ -73,4 +77,83 @@ export function FilterDistForDead(districts: District[]) {
     });
   }
   return result;
+}
+
+// We gonna use this somewhere else the warning will go away
+function CheckDeath(player: Player) {
+  const dieIndex = GetRandomIndex(100) * player.SurvivalRate;
+
+  if (dieIndex < 20) {
+    player.Events.push(deathScenario.GetScenario(player));
+    return false;
+  }
+  return true;
+}
+
+export function RoundGenerator(game: Game): Round {
+  const gamooo = game as GameClass;
+  const round: Round = {
+    Districts: [],
+    RoundNumber: gamooo.roundId,
+  };
+
+  for (let i = 0; i < game.Districts.length; i++) {
+    for (let j = 0; j < game.Districts[i].Players.length; j++) {
+      const element = game.Districts[i].Players[j];
+
+      const event = randomEnum(Events);
+      switch (event) {
+        case Events.Death:
+          element.IsAlive = false;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+          break;
+        case Events.Injury:
+          element.SurvivalRate -= 0.35;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+
+          break;
+        case Events.LightInjury:
+          element.SurvivalRate -= 0.35;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+
+          break;
+        case Events.Misc:
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+
+          break;
+        case Events.LightBuff:
+          element.SurvivalRate += 0.35;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+
+          break;
+        case Events.Buff:
+          element.SurvivalRate += 0.55;
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
+          //Push to round thing the player with District
+
+          break;
+        case Events.NoEvent:
+        //break to default no event
+        // eslint-disable-next-line no-fallthrough
+        default:
+          //Do nothing;
+          break;
+      }
+    }
+  }
+
+  //Create the Images for the Round after this, so after this Method gets called.
+  //Check Death we will do somewhere else, so we can get the pics first and such.
+  return round;
 }

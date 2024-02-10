@@ -3,8 +3,6 @@ import {
   SlashCommandBuilder,
   EmbedBuilder,
   CommandInteractionOptionResolver,
-  TextChannel,
-  Guild,
   MessageReaction,
   TextBasedChannel,
   ChannelType,

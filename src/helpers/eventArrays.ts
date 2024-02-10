@@ -17,7 +17,7 @@ class BaseScenario {
   }
 }
 
-class SingleScenario extends BaseScenario {
+export class SingleScenario extends BaseScenario {
   constructor(scenarios: string[]) {
     super(scenarios);
   }
