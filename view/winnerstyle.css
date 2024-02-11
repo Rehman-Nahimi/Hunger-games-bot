@@ -1,0 +1,54 @@
+/* Style for the Body  */
+/* ------------------------------------------------------- */
+body {
+  background-color: rgb(255, 230, 208);
+}
+
+/* Style for the Player Boxes  */
+/* ------------------------------------------------------- */
+div {
+  text-align: center;
+  margin: 10px;
+}
+
+h1, h2 {
+  font-family: Verdana, sans-serif;
+}
+
+p {
+  font-family: Verdana, sans-serif;
+}
+/* Styles for the Player Pictures  */
+/* ------------------------------------------------------- */
+
+img {
+  width: 100px;
+  height: auto;
+  border-radius: 20px;
+}
+
+div.picture-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-top: 50px;
+}
+
+div.picture-containerRound{
+  margin-top: 50px;
+}
+
+div.dead-player > img{
+    filter: grayscale(100%); /* Apply full grayscale effect when character is dead */
+}
+
+div.DistContainer{
+  margin-top: 45px;
+}
+
+h1.dist{
+  margin: 0;
+  margin-top: 30px;
+
+}
