@@ -21,12 +21,17 @@ p {
 }
 /* Styles for the Player Pictures  */
 /* ------------------------------------------------------- */
+img.winner-pic {
+  width: 150px !important;
+
+}
 
 img {
   width: 100px;
   height: auto;
   border-radius: 20px;
 }
+
 
 div.picture-container {
   display: flex;

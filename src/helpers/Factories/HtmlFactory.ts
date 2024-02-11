@@ -162,16 +162,16 @@ function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
   ${!isWinner ? ` <h2>${player.Name}</h2>` : ""}   
       <div class="">
-          <img src="${player.Url}"
+          <img ${(!isWinner) ? "" : "class=\"winner-pic\""} src="${player.Url}"
               alt="${player.Name} Profile Picture">
       </div>
+      <p>
       ${
         !isWinner
-          ? ` <p>
-      ${player.Events[player.Events.length - 1]}
-  </p>`
-          : ""
+          ? player.Events[player.Events.length - 1]
+          : "🎉Winner winner chicken dinner🎉"
       }
+      </p>
      
   </div> `;
 
@@ -182,7 +182,7 @@ export function CreateWinnerHTML(player: Player) {
   const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
   const playerString = CreatePlayerHTML(player, true);
 
-  const container = `    <div>
+  const container = `    <div class="picture-containerRound">
 <h1>The Winner is ${player.Name}</h1>
 <div class="picture-containerRound">
  ${playerString}
