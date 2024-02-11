@@ -6,30 +6,28 @@ import { GetRandomIndex, MakeGame } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { TextChannel } from "discord.js";
+import { TextBasedChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
 import { GetPictureBuffer } from "../helpers/Factories/PictureFactory";
 import {
   CreateDieMessage,
   CreateRoundMessage,
 } from "../helpers/Factories/MessageFactory";
-import { deathScenario } from "../helpers/eventArrays";
+import { deathScenario, miscScenario } from "../helpers/eventArrays";
 import { Round } from "./Round";
+import { SendMessage } from "../helpers/messageHandler";
 
 export class GameClass implements Game {
-  Districts: District[] = [];
-  Channel: TextChannel | null = null;
-  Rounds: Round[] = [];
-  private playersAlive = 0;
-  public roundId = 0;
+  Districts: District[];
+  Channel: TextBasedChannel ;
+  Rounds: Round[];
+  private playersAlive;
+  public roundId;
 
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
 
-  /*
-    Bereite Spiel vor.
-  */
-  PrepareGame(players: Player[], channel: TextChannel, intervalTime = 5000) {
+  constructor(players: Player[], channel: TextBasedChannel){
     const playDumm: Player[] = [];
 
     dummies.forEach((element) => {
@@ -38,12 +36,20 @@ export class GameClass implements Game {
         IsAlive: element.IsAlive,
         Name: element.Name,
         Url: element.Url,
+        SurvivalRate: 1,
       });
     });
 
+    this.roundId = 0;
     this.playersAlive = playDumm.length;
     this.Districts = MakeGame(playDumm).Districts;
     this.Channel = channel;
+    this. Rounds = []; 
+  }
+  /*
+    Bereite Spiel vor.
+  */
+  PrepareGame(intervalTime = 5000) {
     this.intervalId = setInterval(
       function (game) {
         game.PlayGame(game);
@@ -62,8 +68,20 @@ export class GameClass implements Game {
       // //Gets the Index of the Player/District to Die.
       // const tDIndex = GetRandomIndex(game.Districts.length);
 
+      for (let I = 0; I < game.Districts.length; I++) {
+        const element = game.Districts[I];
+        for (let j = 0; j < element.Players.length; j++) {
+          const player = element.Players[j];
+          player.Events.push(miscScenario.GetScenario(player));
+        }
+      }
+
+      //picture event
+
       //Lets People Die.
       GameClass.LetPlayersDie(game);
+
+      //picture dies
 
       // The async Method Call to not block the Thread.
       await GameClass.SendRoundMessages(game);
@@ -74,6 +92,7 @@ export class GameClass implements Game {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
+        game.intervalId = null; 
       }
 
       console.log("🎮 Game Ended !!!!");
@@ -91,12 +110,13 @@ export class GameClass implements Game {
       const message = CreateRoundMessage(buffers, game.roundId);
 
       //Sends the Feedback to the Server.
-      game.Channel.send("----------------------------------------------------");
+      SendMessage(game.Channel, "----------------------------------------------------");
       // game.Channel.send(CreateDieMessage(index + 1));
-      game.Channel.send(message);
+      SendMessage(game.Channel, message);
 
+      
       //Sends the Feedback to the Server.
-      game.Channel.send("----------------------------------------------------");
+      SendMessage(game.Channel, "----------------------------------------------------");
 
       //Gets the Strings that need to be converted.
       const dieHTML = CreateDieHTML(game);
@@ -105,14 +125,14 @@ export class GameClass implements Game {
       const dieBuffer = await GetPictureBuffer(dieHTML);
       const dieMessage = CreateDieMessage(dieBuffer);
 
-      game.Channel.send(dieMessage);
+      SendMessage(game.Channel, dieMessage);
     }
   }
 
   private static LetPlayersDie(game: Game) {
     //Goes Trough each District to then look if someone Dies.
     const gamooo = game as GameClass;
-    game.Rounds.push({ Districts: [], RounNumber: gamooo.roundId });
+    game.Rounds.push({ Districts: [], RoundNumber: gamooo.roundId });
     for (let i = 0; i < game.Districts.length; i++) {
       //Decider if theres a person to Die and picks the person.
       const probability = GetRandomIndex(10);

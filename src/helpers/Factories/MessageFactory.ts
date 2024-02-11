@@ -1,41 +1,63 @@
 import { AttachmentBuilder, EmbedBuilder } from "discord.js";
 
 export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
-  //Creates Arrays of the Size of the Buffer.
-  const exampleEmbeds: EmbedBuilder[] = new Array<EmbedBuilder>(buffers.length);
-  const myAttachments: AttachmentBuilder[] = new Array<AttachmentBuilder>(
-    buffers.length
+  const myAttachments = CreateMessageAttachments(
+    buffers,
+    `Round ${roundNumber}`
   );
-
-  //Creates Attachment Objects for each buffer and saves them in the Arrays.
-  for (let i = 0; i < buffers.length; i++) {
-    const exampleEmbed = new EmbedBuilder()
-      .setTitle(`Round ${roundNumber}`)
-      .setColor(0x0099ff);
-
-    const myAttachment = new AttachmentBuilder(buffers[i], {
-      name: `GameBuffer_${i}.png`,
-    });
-    exampleEmbed.setImage(`attachment://${myAttachment.name}`);
-
-    //push to the array examplesEmbeds
-    exampleEmbeds[i] = exampleEmbed;
-    //push to the array myAttachments
-    myAttachments[i] = myAttachment;
-  }
 
   //Create the Result Object.
   const result = {
     content: "Game Image",
-    embeds: exampleEmbeds,
-    files: myAttachments,
+    embeds: myAttachments[0],
+    files: myAttachments[1],
   };
 
   return result;
 }
 
 export function CreateDieMessage(buffers: Buffer[]) {
-  //Creates Arrays of the Size of the Buffer.
+  const myAttachments = CreateMessageAttachments(
+    buffers,
+    "Death of Round",
+    0xff0000
+  );
+
+  //Create the Result Object.
+  const result = {
+    content: "Die Images",
+    embeds: myAttachments[0],
+    files: myAttachments[1],
+  };
+
+  return result;
+}
+
+export function CreateEndMessage(buffer: Buffer) {
+  const buffers: Buffer[] = [];
+  buffers.push(buffer);
+  
+  const myAttachments = CreateMessageAttachments(
+    buffers,
+    "The WINNER",
+    0x1abc9c
+  );
+
+  //Create the Result Object.
+  const result = {
+    content: "Die Images",
+    embeds: myAttachments[0],
+    files: myAttachments[1],
+  };
+  return result;
+}
+
+function CreateMessageAttachments(
+  buffers: Buffer[],
+  title: string,
+  embedColor = 0x0099ff
+):[EmbedBuilder[], AttachmentBuilder[]] {
+  //
   const exampleEmbeds: EmbedBuilder[] = new Array<EmbedBuilder>(buffers.length);
   const myAttachments: AttachmentBuilder[] = new Array<AttachmentBuilder>(
     buffers.length
@@ -44,11 +66,11 @@ export function CreateDieMessage(buffers: Buffer[]) {
   //Creates Attachment Objects for each buffer and saves them in the Arrays.
   for (let i = 0; i < buffers.length; i++) {
     const exampleEmbed = new EmbedBuilder()
-      .setTitle("Round ")
-      .setColor(0xff0000);
+      .setTitle(title)
+      .setColor(embedColor);
 
     const myAttachment = new AttachmentBuilder(buffers[i], {
-      name: `DieBuffer_${i}.png`,
+      name: `${title.replace(/\s/g, "")}_${i}.png`,
     });
     exampleEmbed.setImage(`attachment://${myAttachment.name}`);
 
@@ -58,12 +80,6 @@ export function CreateDieMessage(buffers: Buffer[]) {
     myAttachments[i] = myAttachment;
   }
 
-  //Create the Result Object.
-  const result = {
-    content: "Die Images",
-    embeds: exampleEmbeds,
-    files: myAttachments,
-  };
-
-  return result;
+  return [exampleEmbeds, myAttachments] ;
 }
+

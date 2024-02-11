@@ -4,6 +4,7 @@ import { NewIntervalMap } from "../intervalMap";
 import fs from "fs";
 import { FilterDistForDead } from "../helpfuntions";
 import { GameClass } from "../../types/GameClass";
+import { Player } from "../../types/Player";
 
 const styles = fs.readFileSync("view/customStyles.css");
 const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
@@ -94,37 +95,6 @@ export function CreateDieHTML(game: Game): string[] {
   return htmlStrings;
 }
 
-export function CreateRoundHtml(game: Game): string[] {
-  //Creates an Empty Array to fill with the Strings representing the HTMLs.
-  const htmlStrings: string[] = [];
-
-  if (game.Districts.length > 0 && game.Districts[0].Players.length > 0) {
-    const amountOfPlayer = game.Districts[0].Players.length;
-    const maxDistrict = NewIntervalMap.FindCorrespondingValue(
-      new NewIntervalMap(),
-      amountOfPlayer
-    );
-
-    let districtHelper = "";
-    let x = 0;
-
-    for (let i = 0; i < game.Districts.length; i++) {
-      districtHelper += CreateHtmlDistrict(game.Districts[i]);
-      x++;
-      if (x >= maxDistrict || i + 1 >= game.Districts.length) {
-        const str = template.replace("{0}", districtHelper);
-        htmlStrings.push(str);
-        x = 0;
-        districtHelper = "";
-      }
-    }
-  }
-
-  return htmlStrings;
-}
-
-
-
 function CreateDieDistrict(district: District): string {
   let str = "";
 
@@ -146,6 +116,52 @@ function CreateDieDistrict(district: District): string {
       ${str}
   </div>
     </div>`;
+
+  return result;
+}
+
+export function CreateRoundHtml(game: Game): string[] {
+  //Creates an Empty Array to fill with the Strings representing the HTMLs.
+  const htmlStrings: string[] = [];
+  const gamooo = game as GameClass;
+
+  if (game.Rounds[gamooo.roundId].Districts.length > 0) {
+    const maxPlayer = 3;
+
+    let districtHelper = "";
+    let x = 0;
+
+    for (let i = 0; i < game.Rounds[gamooo.roundId].Districts.length; i++) {
+      for (let j = 0; j < game.Rounds[gamooo.roundId].Districts[i].Players.length; j++ ) {
+        const element = game.Rounds[gamooo.roundId].Districts[i].Players[j];
+
+        districtHelper += CreatePlayerHTML(element);
+        x++;
+
+        if (x >= maxPlayer || i + 1 >= game.Rounds[gamooo.roundId].Districts.length) {
+          const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`; 
+          const str = template.replace("{0}", result);
+          htmlStrings.push(str);
+          x = 0;
+          districtHelper = "";
+        }
+      }
+    }
+  }
+  return htmlStrings;
+}
+
+function CreatePlayerHTML(player: Player): string {
+  const result = ` <div class = "DistContainer">
+    <h2>${player.Name}</h2>
+      <div class="">
+          <img src="${player.Url}"
+              alt="${player.Name} Profile Picture">
+      </div>
+      <p>
+          ${player.Events[player.Events.length - 1]}
+      </p>
+  </div> `;
 
   return result;
 }

@@ -3,9 +3,9 @@ import {
   SlashCommandBuilder,
   EmbedBuilder,
   CommandInteractionOptionResolver,
-  TextChannel,
-  Guild,
   MessageReaction,
+  TextBasedChannel,
+  ChannelType,
 } from "discord.js";
 import { client } from "..";
 import ms from "ms";
@@ -20,6 +20,7 @@ export const data = new SlashCommandBuilder()
     option
       .setName("channel")
       .setDescription("What channel would you like this message to appear in")
+      .addChannelTypes(ChannelType.GuildText)
       .setRequired(true)
   )
   .addStringOption((op) =>
@@ -43,24 +44,14 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction: CommandInteraction) {
   const info = interaction.options as CommandInteractionOptionResolver;
-  const channel = info.getChannel("channel");
+  const channel = info.getChannel("channel") as TextBasedChannel;
   const message = info.getString("message");
   const timer = info.getString("time");
   const playerCount = info.getInteger("players");
   const guildId = interaction.guildId;
-
   const numbTime = ms(timer as string);
 
   if (guildId) {
-    const guild: Guild = client.guilds.cache.get(guildId) as Guild;
-    let targetChannel: TextChannel;
-
-    if (channel !== null) {
-      targetChannel = guild.channels.cache.get(channel.id) as TextChannel;
-    } else {
-      targetChannel = interaction.channel as TextChannel;
-    }
-
     const exampleEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
       .setTitle("Hunger games")
@@ -71,8 +62,8 @@ export async function execute(interaction: CommandInteraction) {
         iconURL: `${client.user?.avatarURL()}`,
       });
 
-    if (message && targetChannel && playerCount) {
-      CollectUsers(targetChannel, exampleEmbed, numbTime, playerCount);
+    if (message && channel && playerCount) {
+      CollectUsers(channel, exampleEmbed, numbTime, playerCount);
     }
   }
   return interaction.reply({
@@ -82,7 +73,7 @@ export async function execute(interaction: CommandInteraction) {
 }
 
 async function CollectUsers(
-  channel: TextChannel,
+  channel: TextBasedChannel,
   embedMessage: EmbedBuilder,
   timer: number,
   playerCount: number
@@ -115,12 +106,13 @@ async function CollectUsers(
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
           Events: [],
+          SurvivalRate: 1
         });
       });
       channel.send("The Collection ended");
 
-      const myGame = new GameClass();
-      myGame.PrepareGame(players, channel, 5000);
+      const myGame = new GameClass(players, channel);
+      myGame.PrepareGame(10_000);
     });
   });
 }
