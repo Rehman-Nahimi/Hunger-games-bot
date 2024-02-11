@@ -1,8 +1,5 @@
 import { AttachmentBuilder, EmbedBuilder } from "discord.js";
-import { Player } from "../../types/Player";
 import { client } from "../..";
-import { CreateWinnerHTML } from "./HtmlFactory";
-import { GetPictureBufferSingle } from "./PictureFactory";
 
 export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
   const myAttachments = CreateMessageAttachments(
