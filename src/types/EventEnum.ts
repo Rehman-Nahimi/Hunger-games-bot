@@ -8,18 +8,21 @@ import {
   lightInjuryScenario,
   miscScenario,
 } from "../helpers/eventArrays";
+import { GetRandomIndex } from "../helpers/helpfuntions";
 
 export enum Events {
   NoEvent,
   Death = 1,
-  Injury,
   NoEvent2 = NoEvent,
-  LightInjury,
-  Misc,
+  Injury,
   NoEvent3 = NoEvent,
-  LightBuff,
-  Buff,
+  LightInjury,
   NoEvent4 = NoEvent,
+  Misc,
+  NoEvent5 = NoEvent,
+  LightBuff,
+  NoEvent6 = NoEvent,
+  Buff,
 }
 
 //This is a Test Feature.
@@ -36,7 +39,7 @@ export function randomEnum<T extends object>(anEnum: T): T[keyof T] {
   const enumValues = Object.keys(anEnum)
     .map((n) => Number.parseInt(n))
     .filter((n) => !Number.isNaN(n)) as unknown as T[keyof T][];
-  const randomIndex = Math.floor(Math.random() * enumValues.length);
+  const randomIndex = GetRandomIndex(enumValues.length);
   const randomEnumValue = enumValues[randomIndex];
   return randomEnumValue;
 }

@@ -132,14 +132,21 @@ export function CreateRoundHtml(game: Game): string[] {
     let x = 0;
 
     for (let i = 0; i < game.Rounds[gamooo.roundId].Districts.length; i++) {
-      for (let j = 0; j < game.Rounds[gamooo.roundId].Districts[i].Players.length; j++ ) {
+      for (
+        let j = 0;
+        j < game.Rounds[gamooo.roundId].Districts[i].Players.length;
+        j++
+      ) {
         const element = game.Rounds[gamooo.roundId].Districts[i].Players[j];
 
         districtHelper += CreatePlayerHTML(element);
         x++;
 
-        if (x >= maxPlayer || i + 1 >= game.Rounds[gamooo.roundId].Districts.length) {
-          const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`; 
+        if (
+          x >= maxPlayer ||
+          i + 1 >= game.Rounds[gamooo.roundId].Districts.length
+        ) {
+          const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`;
           const str = template.replace("{0}", result);
           htmlStrings.push(str);
           x = 0;
@@ -151,17 +158,38 @@ export function CreateRoundHtml(game: Game): string[] {
   return htmlStrings;
 }
 
-function CreatePlayerHTML(player: Player): string {
+function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
-    <h2>${player.Name}</h2>
+  ${!isWinner ? ` <h2>${player.Name}</h2>` : ""}   
       <div class="">
           <img src="${player.Url}"
               alt="${player.Name} Profile Picture">
       </div>
-      <p>
-          ${player.Events[player.Events.length - 1]}
-      </p>
+      ${
+        !isWinner
+          ? ` <p>
+      ${player.Events[player.Events.length - 1]}
+  </p>`
+          : ""
+      }
+     
   </div> `;
 
   return result;
 }
+
+export function CreateWinnerHTML(player: Player) {
+  const template = `<html><head> <style> ${styles} </style> </head> <body>  {0} </body> </html>`;
+  const playerString = CreatePlayerHTML(player, true);
+
+  const container = `    <div>
+<h1>The Winner is ${player.Name}</h1>
+<div class="picture-containerRound">
+ ${playerString}
+</div>
+</div>`;
+
+  const result = template.replace("{0}", container);
+  return result;
+}
+

@@ -9,7 +9,7 @@ class BaseScenario {
   }
 
   public GetScenario(player: Player) {
-    const index: number = GetRandomIndex(SingleScenario.length);
+    const index: number = GetRandomIndex(this.Scenario.length);
 
     const scenarioResult = this.Scenario[index].replace("{0}", player.Name);
 

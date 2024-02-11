@@ -7,19 +7,6 @@ import { Round } from "../types/Round";
 import { deathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
-export function makeId(length: number) {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
-
 export function MakeGame(totalPlayers: Player[]): Game {
   const game: Game = {
     Districts: [],
@@ -80,14 +67,14 @@ export function FilterDistForDead(districts: District[]) {
 }
 
 // We gonna use this somewhere else the warning will go away
-function CheckDeath(player: Player) {
+export function CheckDeath(player: Player) {
   const dieIndex = GetRandomIndex(100) * player.SurvivalRate;
 
-  if (dieIndex < 20) {
+  if (dieIndex < 5) {
     player.Events.push(deathScenario.GetScenario(player));
-    return false;
+    player.IsAlive = false; 
   }
-  return true;
+  return player; 
 }
 
 export function RoundGenerator(game: Game): Round {
@@ -102,46 +89,54 @@ export function RoundGenerator(game: Game): Round {
       const element = game.Districts[i].Players[j];
 
       const event = randomEnum(Events);
+      let index:number; 
       switch (event) {
         case Events.Death:
           element.IsAlive = false;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.Injury:
           element.SurvivalRate -= 0.35;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
-
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.LightInjury:
           element.SurvivalRate -= 0.35;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
-
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.Misc:
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
-
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.LightBuff:
           element.SurvivalRate += 0.35;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
-
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.Buff:
           element.SurvivalRate += 0.55;
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           element.Events.push(EzMapSzenario.get(event)!.GetScenario(element));
           //Push to round thing the player with District
-
+          index =  CheckDistrict(round, game.Districts[i]);
+          round.Districts[index].Players.push(element); 
           break;
         case Events.NoEvent:
         //break to default no event
@@ -156,4 +151,12 @@ export function RoundGenerator(game: Game): Round {
   //Create the Images for the Round after this, so after this Method gets called.
   //Check Death we will do somewhere else, so we can get the pics first and such.
   return round;
+}
+
+function CheckDistrict(round: Round, district: District){
+  if (round.Districts.findIndex((x)=> x.DistNumber === district.DistNumber) ===-1) {
+    round.Districts.push({DistNumber: district.DistNumber, Players: []});
+  }
+
+  return round.Districts.findIndex((x)=> x.DistNumber === district.DistNumber); 
 }
