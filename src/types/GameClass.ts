@@ -61,63 +61,53 @@ export class GameClass implements Game {
   /*
     Bereite Spiel vor.
   */
-  PrepareGame(intervalTime = 5000) {
-    this.intervalId = setInterval(
-      function (game) {
-        game.PlayGame(game);
-      },
-      1000,
-      this
-    );
-  }
-
-  // async PrepareGame(intervalTime = 5000) {
-  //   this.isplaying = true;
-
-  //   console.log("im prepare");
-  //   while (this.isplaying) {
-
-  //     this.PlayGame(this);
-  //   }
+  // PrepareGame(intervalTime = 5000) {
+  //   this.intervalId = setInterval(
+  //     function (game) {
+  //       game.PlayGame(game);
+  //     },
+  //     1000,
+  //     this
+  //   );
   // }
+
+  async PrepareGame(intervalTime = 5000) {
+    this.isplaying = true;
+
+    console.log("im prepare");
+    while (this.isplaying) {
+      this.PlayGame(this);
+    }
+  }
 
   private PlayGame(game: GameClass) {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
       console.log(`Playing the game with Instance ${game} ${game.roundId}`);
-      //picture event
-      // game.Rounds.push(
-
-      console.log(this.playersAlive);
-
-      for (let i = 0; i < game.Districts.length; i++) {
-        for (let j = 0; j < game.Districts[i].Players.length; j++) {
-          const element = game.Districts[i].Players[j];
-            console.log(`Player alive ${element.Name} status: ${element.IsAlive}`);
-        }
-      }
 
       game.RoundGenerator();
 
-      // );
+      //picture event
       // const htmlRound = CreateRoundHtml(game);
       // const roundBuffers = await GetPictureBuffer(htmlRound);
       // const roundMessage = CeateRoundMessage(roundBuffers, game.roundId);
       // SendMessage(game.Channel, roundMessage);
 
+      //Filter the dead players out, so the rest works fine.
       game.Districts = FilterDistForAlive(game.Districts);
 
       //Lets People Die.
-      // GameClass.LetPlayersDie(game);
+      this.LetPlayersDie(game);
+
+      //Filter again afterwards.
+      game.Districts = FilterDistForAlive(game.Districts);
 
       //picture dies
 
       // The async Method Call to not block the Thread.
       // await GameClass.SendRoundMessages(game);
     } else {
-      game.FilterAlive();
-
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
@@ -188,7 +178,8 @@ export class GameClass implements Game {
       }
     }
 
-    this.FilterAlive();
+    this.Districts = FilterDistForAlive(game.Districts);
+
     console.log(`Number of Player alive ${game.playersAlive}`);
     game.roundId++;
   }
@@ -206,64 +197,66 @@ export class GameClass implements Game {
     );
   }
 
-  private FilterAlive() {
-    this.Rounds.push({ Districts: [], RoundNumber: this.roundId });
+  //#region Maybe needed
+  // private FilterAlive() {
+  //   this.Rounds.push({ Districts: [], RoundNumber: this.roundId });
 
-    for (let i = 0; i < this.Districts.length; i++) {
-      // const players = game.Districts[i].Players.filter((x) => x.IsAlive !== true);
+  //   for (let i = 0; i < this.Districts.length; i++) {
+  //     // const players = game.Districts[i].Players.filter((x) => x.IsAlive !== true);
 
-      const playersManual: Player[] = [];
-      for (let index = 0; index < this.Districts[i].Players.length; index++) {
-        const element = this.Districts[i].Players[index];
-        if (element.IsAlive !== true) {
-          playersManual.push(element);
-        }
-      }
+  //     const playersManual: Player[] = [];
+  //     for (let index = 0; index < this.Districts[i].Players.length; index++) {
+  //       const element = this.Districts[i].Players[index];
+  //       if (element.IsAlive !== true) {
+  //         playersManual.push(element);
+  //       }
+  //     }
 
-      for (let index = 0; index < playersManual.length; index++) {
-        const element = playersManual[index];
-        console.log(`The player ${element.Name} and ${element.IsAlive}`);
-      }
+  //     for (let index = 0; index < playersManual.length; index++) {
+  //       const element = playersManual[index];
+  //       console.log(`The player ${element.Name} and ${element.IsAlive}`);
+  //     }
 
-      if (playersManual.length > 0) {
-        this.Rounds[this.roundId].Districts.push({
-          DistNumber: this.Districts[i].DistNumber,
-          Players: playersManual,
-        });
+  //     if (playersManual.length > 0) {
+  //       this.Rounds[this.roundId].Districts.push({
+  //         DistNumber: this.Districts[i].DistNumber,
+  //         Players: playersManual,
+  //       });
 
-        for (let index = 0; index < playersManual.length; index++) {
-          const delIndex = this.Districts[i].Players.indexOf(
-            playersManual[index]
-          );
+  //       for (let index = 0; index < playersManual.length; index++) {
+  //         const delIndex = this.Districts[i].Players.indexOf(
+  //           playersManual[index]
+  //         );
 
-          if (delIndex !== -1) {
-            this.Districts[i].Players.splice(delIndex, 1);
-          }
-        }
-      }
-      //Filters so we get the Amount of Alive people
-      const aliveCount = this.Districts[i].Players.filter(
-        (x) => x.IsAlive === true
-      ).length;
+  //         if (delIndex !== -1) {
+  //           this.Districts[i].Players.splice(delIndex, 1);
+  //         }
+  //       }
+  //     }
+  //     //Filters so we get the Amount of Alive people
+  //     const aliveCount = this.Districts[i].Players.filter(
+  //       (x) => x.IsAlive === true
+  //     ).length;
 
-      //If the alive Count is 0 then we can delete that District.
-      if (aliveCount === 0) {
-        this.Districts.splice(i, 1);
-      }
-    }
+  //     //If the alive Count is 0 then we can delete that District.
+  //     if (aliveCount === 0) {
+  //       this.Districts.splice(i, 1);
+  //     }
+  //   }
 
-    console.log(this.playersAlive);
+  //   console.log(this.playersAlive);
 
-    for (let I = 0; I < this.Districts.length; I++) {
-      const element = this.Districts[I];
-      for (let j = 0; j < element.Players.length; j++) {
-        const player = element.Players[j];
-        console.log(
-          `District ${element.DistNumber} player ${player.Name} ${player.IsAlive}`
-        );
-      }
-    }
-  }
+  //   for (let I = 0; I < this.Districts.length; I++) {
+  //     const element = this.Districts[I];
+  //     for (let j = 0; j < element.Players.length; j++) {
+  //       const player = element.Players[j];
+  //       console.log(
+  //         `District ${element.DistNumber} player ${player.Name} ${player.IsAlive}`
+  //       );
+  //     }
+  //   }
+  // }
+  //#endregion
 
   RoundGenerator() {
     const round: Round = {
@@ -373,3 +366,4 @@ export class GameClass implements Game {
     this.Rounds.push(round);
   }
 }
+
