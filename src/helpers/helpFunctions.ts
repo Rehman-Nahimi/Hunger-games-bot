@@ -12,7 +12,7 @@ export function MakeGame(totalPlayers: Player[]): Game {
     Channel: null,
     Rounds: [],
     playersAlive: totalPlayers.length,
-    roundId: 0, 
+    roundId: 0,
   };
 
   //Equation for the player per District
@@ -56,13 +56,33 @@ export function GetRandomIndex(maxNumber: number) {
 export function FilterDistForDead(districts: District[]) {
   const result: District[] = [];
 
-  for (let I = 0; I < districts.length; I++) {
-    const element = districts[I];
+  for (let i = 0; i < districts.length; i++) {
+    const element = districts[i];
 
-    result.push({
-      DistNumber: element.DistNumber,
-      Players: element.Players.filter((x) => x.IsAlive !== true),
-    });
+    const filteredPlayers = element.Players.filter((x) => x.IsAlive !== true);
+    if (filteredPlayers.length > 0) {
+      result.push({
+        DistNumber: element.DistNumber,
+        Players: filteredPlayers,
+      });
+    }
+  }
+  return result;
+}
+
+export function FilterDistForAlive(districts: District[]) {
+  const result: District[] = [];
+
+  for (let i = 0; i < districts.length; i++) {
+    const element = districts[i];
+
+    const filteredPlayers = element.Players.filter((x) => x.IsAlive === true);
+    if (filteredPlayers.length > 0) {
+      result.push({
+        DistNumber: element.DistNumber,
+        Players: filteredPlayers,
+      });
+    }
   }
   return result;
 }
@@ -77,4 +97,3 @@ export function CheckDeath(player: Player) {
   }
   return player;
 }
-

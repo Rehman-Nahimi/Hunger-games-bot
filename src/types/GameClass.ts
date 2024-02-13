@@ -4,7 +4,13 @@ import {
   CreateRoundHtml,
   CreateWinnerHTML,
 } from "../helpers/Factories/HtmlFactory";
-import { CheckDeath, FilterDistForDead, GetRandomIndex, MakeGame } from "../helpers/helpFunctions";
+import {
+  CheckDeath,
+  FilterDistForAlive,
+  FilterDistForDead,
+  GetRandomIndex,
+  MakeGame,
+} from "../helpers/helpFunctions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
@@ -29,7 +35,7 @@ export class GameClass implements Game {
   Rounds: Round[];
   public playersAlive;
   public roundId;
-  isplaying = false; 
+  isplaying = false;
   //Placeholder for the Intervall Process Id.
   private intervalId: NodeJS.Timeout | null = null;
 
@@ -55,41 +61,53 @@ export class GameClass implements Game {
   /*
     Bereite Spiel vor.
   */
-  // PrepareGame(intervalTime = 5000) {
-  //   this.intervalId = setInterval(
-  //     function (game) {
-  //       game.PlayGame(game);
-  //     },
-  //     1000,
-  //     this
-  //   );
-  // }
-
-  async PrepareGame(intervalTime = 5000) {
-    this.isplaying = true;
-
-    console.log("im prepare"); 
-    while (this.isplaying) {
-
-      this.PlayGame(this);
-    }
+  PrepareGame(intervalTime = 5000) {
+    this.intervalId = setInterval(
+      function (game) {
+        game.PlayGame(game);
+      },
+      1000,
+      this
+    );
   }
 
-  private  PlayGame(game: GameClass){
+  // async PrepareGame(intervalTime = 5000) {
+  //   this.isplaying = true;
+
+  //   console.log("im prepare");
+  //   while (this.isplaying) {
+
+  //     this.PlayGame(this);
+  //   }
+  // }
+
+  private PlayGame(game: GameClass) {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
       console.log(`Playing the game with Instance ${game} ${game.roundId}`);
       //picture event
       // game.Rounds.push(
+
+      console.log(this.playersAlive);
+
+      for (let i = 0; i < game.Districts.length; i++) {
+        for (let j = 0; j < game.Districts[i].Players.length; j++) {
+          const element = game.Districts[i].Players[j];
+            console.log(`Player alive ${element.Name} status: ${element.IsAlive}`);
+        }
+      }
+
       game.RoundGenerator();
+
       // );
       // const htmlRound = CreateRoundHtml(game);
       // const roundBuffers = await GetPictureBuffer(htmlRound);
       // const roundMessage = CeateRoundMessage(roundBuffers, game.roundId);
       // SendMessage(game.Channel, roundMessage);
 
-      game.Districts = FilterDistForDead(game.Districts);
+      game.Districts = FilterDistForAlive(game.Districts);
+
       //Lets People Die.
       // GameClass.LetPlayersDie(game);
 
@@ -122,7 +140,7 @@ export class GameClass implements Game {
           );
         }
       }
-      game.isplaying = false; 
+      game.isplaying = false;
     }
   }
 
@@ -355,4 +373,3 @@ export class GameClass implements Game {
     this.Rounds.push(round);
   }
 }
-
