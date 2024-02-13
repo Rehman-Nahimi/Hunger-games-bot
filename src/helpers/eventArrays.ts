@@ -1,5 +1,5 @@
 import { Player } from "../types/Player";
-import { GetRandomIndex } from "./helpfuntions";
+import { GetRandomIndex } from "./helpFunctions";
 
 class BaseScenario {
   private readonly Scenario: string[];
@@ -67,6 +67,6 @@ export const lightBuffScenario = new SingleScenario([
 
 export const buffScenario = new SingleScenario([
   "{0} finds a gun with 3 bullets",
-  "{0} is given a medkit from a sponsor ",
+  "{0} is given a Med-kit from a sponsor ",
   "{0} steals another parties food and supplies",
 ]);

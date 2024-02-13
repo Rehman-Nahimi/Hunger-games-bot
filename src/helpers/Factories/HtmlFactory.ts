@@ -2,8 +2,7 @@ import { District } from "../../types/District";
 import { Game } from "../../types/Game";
 import { NewIntervalMap } from "../intervalMap";
 import fs from "fs";
-import { FilterDistForDead } from "../helpfuntions";
-import { GameClass } from "../../types/GameClass";
+import { FilterDistForDead } from "../helpFunctions";
 import { Player } from "../../types/Player";
 
 const styles = fs.readFileSync("view/customStyles.css");

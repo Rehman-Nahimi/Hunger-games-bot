@@ -3,7 +3,7 @@ import { Events, EzMapSzenario, randomEnum } from "../types/EventEnum";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
 import { Round } from "../types/Round";
-import { deathScenario, slowDeathScenario } from "./eventArrays";
+import { slowDeathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
 export function MakeGame(totalPlayers: Player[]): Game {
@@ -106,7 +106,6 @@ export function RoundGenerator(game: Game): Round {
             round.Districts[index].Players.push(element);
             game.playersAlive -= 1;
             amountDie -= 1;
-            console.log("In der roundgen death ");
           }
           break;
         case Events.Injury:

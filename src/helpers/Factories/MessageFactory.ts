@@ -17,10 +17,10 @@ export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
   return result;
 }
 
-export function CreateDieMessage(buffers: Buffer[]) {
+export function CreateDieMessage(buffers: Buffer[], roundNumber: number) {
   const myAttachments = CreateMessageAttachments(
     buffers,
-    "Death of Round",
+    `Death of Round ${roundNumber}`,
     0xff0000
   );
 

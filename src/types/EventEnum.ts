@@ -8,7 +8,7 @@ import {
   lightInjuryScenario,
   miscScenario,
 } from "../helpers/eventArrays";
-import { GetRandomIndex } from "../helpers/helpfuntions";
+import { GetRandomIndex } from "../helpers/helpFunctions";
 
 export enum Events {
   NoEvent,
