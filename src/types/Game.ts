@@ -10,4 +10,8 @@ export interface Game {
 
 
     Rounds: Round[],
+
+    playersAlive: number, 
+
+    roundId: number,
 }

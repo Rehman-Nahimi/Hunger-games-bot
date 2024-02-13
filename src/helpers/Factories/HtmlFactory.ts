@@ -65,10 +65,9 @@ const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
 export function CreateDieHTML(game: Game): string[] {
   //Create the HTML for the Dead Players.
   const htmlStrings: string[] = [];
-  const gamooo = game as GameClass;
 
   const listOfDist: District[] = FilterDistForDead(
-    game.Rounds[gamooo.roundId - 1].Districts
+    game.Rounds[game.roundId - 1].Districts
   );
 
   if (listOfDist.length > 0 && listOfDist[0].Players.length > 0) {
@@ -123,28 +122,27 @@ function CreateDieDistrict(district: District): string {
 export function CreateRoundHtml(game: Game): string[] {
   //Creates an Empty Array to fill with the Strings representing the HTMLs.
   const htmlStrings: string[] = [];
-  const gamooo = game as GameClass;
 
-  if (game.Rounds[gamooo.roundId].Districts.length > 0) {
+  if (game.Rounds[game.roundId].Districts.length > 0) {
     const maxPlayer = 3;
 
     let districtHelper = "";
     let x = 0;
 
-    for (let i = 0; i < game.Rounds[gamooo.roundId].Districts.length; i++) {
+    for (let i = 0; i < game.Rounds[game.roundId].Districts.length; i++) {
       for (
         let j = 0;
-        j < game.Rounds[gamooo.roundId].Districts[i].Players.length;
+        j < game.Rounds[game.roundId].Districts[i].Players.length;
         j++
       ) {
-        const element = game.Rounds[gamooo.roundId].Districts[i].Players[j];
+        const element = game.Rounds[game.roundId].Districts[i].Players[j];
 
         districtHelper += CreatePlayerHTML(element);
         x++;
 
         if (
           x >= maxPlayer ||
-          i + 1 >= game.Rounds[gamooo.roundId].Districts.length
+          i + 1 >= game.Rounds[game.roundId].Districts.length
         ) {
           const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`;
           const str = template.replace("{0}", result);
@@ -160,7 +158,7 @@ export function CreateRoundHtml(game: Game): string[] {
 
 function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
-  ${!isWinner ? ` <h2>${player.Name}</h2>` : ""}   
+   <h2>${player.Name}</h2>
       <div class="">
           <img ${(!isWinner) ? "" : "class=\"winner-pic\""} src="${player.Url}"
               alt="${player.Name} Profile Picture">
@@ -183,7 +181,7 @@ export function CreateWinnerHTML(player: Player) {
   const playerString = CreatePlayerHTML(player, true);
 
   const container = `    <div class="picture-containerRound">
-<h1>The Winner is ${player.Name}</h1>
+  <h1>👑The Winner of the hunger games👑</h1>
 <div class="picture-containerRound">
  ${playerString}
 </div>

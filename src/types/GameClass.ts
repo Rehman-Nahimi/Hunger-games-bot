@@ -4,17 +4,16 @@ import {
   CreateRoundHtml,
   CreateWinnerHTML,
 } from "../helpers/Factories/HtmlFactory";
-import {
-  CheckDeath,
-  MakeGame,
-  RoundGenerator,
-} from "../helpers/helpfuntions";
+import { CheckDeath, MakeGame, RoundGenerator } from "../helpers/helpfuntions";
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { TextBasedChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
-import { GetPictureBuffer, GetPictureBufferSingle } from "../helpers/Factories/PictureFactory";
+import {
+  GetPictureBuffer,
+  GetPictureBufferSingle,
+} from "../helpers/Factories/PictureFactory";
 import {
   CreateDieMessage,
   CreateEndMessage,
@@ -27,7 +26,7 @@ export class GameClass implements Game {
   Districts: District[];
   Channel: TextBasedChannel;
   Rounds: Round[];
-  private playersAlive;
+  public playersAlive;
   public roundId;
 
   //Placeholder for the Intervall Process Id.
@@ -60,7 +59,7 @@ export class GameClass implements Game {
       function (game) {
         game.PlayGame(game);
       },
-      intervalTime,
+      1000,
       this
     );
   }
@@ -73,21 +72,22 @@ export class GameClass implements Game {
 
       //picture event
       game.Rounds.push(RoundGenerator(game));
-      const htmlRound = CreateRoundHtml(game);
-      const roundBuffers = await GetPictureBuffer(htmlRound);
-      const roundMessage = CreateRoundMessage(roundBuffers, game.roundId);
-      SendMessage(game.Channel, roundMessage);
+      // const htmlRound = CreateRoundHtml(game);
+      // const roundBuffers = await GetPictureBuffer(htmlRound);
+      // const roundMessage = CreateRoundMessage(roundBuffers, game.roundId);
+      // SendMessage(game.Channel, roundMessage);
 
+      console.log(`Player alive before player die ${game.playersAlive}`);
       game = GameClass.FilterAlives(game) as GameClass;
 
       //Lets People Die.
       GameClass.LetPlayersDie(game);
+      console.log(`Player alive after player die ${game.playersAlive}`);
 
       //picture dies
 
       // The async Method Call to not block the Thread.
-      await GameClass.SendRoundMessages(game);
-
+      // await GameClass.SendRoundMessages(game);
     } else {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
@@ -95,9 +95,9 @@ export class GameClass implements Game {
         game.intervalId = null;
       }
 
-      const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]); 
-      const buffer =  await GetPictureBufferSingle(winnerHtml); 
-      
+      const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
+      const buffer = await GetPictureBufferSingle(winnerHtml);
+
       const message = CreateEndMessage(buffer);
       SendMessage(game.Channel, message);
 
@@ -142,28 +142,31 @@ export class GameClass implements Game {
 
   private static LetPlayersDie(game: Game) {
     //Goes Trough each District to then look if someone Dies.
-    const gamooo = game as GameClass;
-    game.Rounds.push({ Districts: [], RoundNumber: gamooo.roundId });
+    game.Rounds.push({ Districts: [], RoundNumber: game.roundId });
     for (let i = 0; i < game.Districts.length; i++) {
       for (let j = 0; j < game.Districts[i].Players.length; j++) {
-        if(gamooo.playersAlive > 1){
-          game.Districts[i].Players[j] = CheckDeath(game.Districts[i].Players[j]);
+        if (game.playersAlive > 1) {
+          const player = CheckDeath(game.Districts[i].Players[j]);
+
+          if (!player.IsAlive) {
+            game.Districts[i].Players[j] = player;
+            game.playersAlive -= 1;
+          }
         }
       }
     }
 
-    game = GameClass.FilterAlives(gamooo);
-    console.log(`Number of Player alive ${gamooo.playersAlive}`);
-    gamooo.roundId++;
+    game = GameClass.FilterAlives(game);
+    console.log(`Number of Player alive ${game.playersAlive}`);
+    game.roundId++;
   }
 
   private static FilterAlives(game: Game) {
-    const gamooo = game as GameClass;
 
     for (let i = 0; i < game.Districts.length; i++) {
       const players = game.Districts[i].Players.filter((x) => !x.IsAlive);
       if (players.length > 0) {
-        game.Rounds[gamooo.roundId].Districts.push({
+        game.Rounds[game.roundId].Districts.push({
           DistNumber: game.Districts[i].DistNumber,
           Players: players,
         });
@@ -173,7 +176,6 @@ export class GameClass implements Game {
 
           if (delIndex !== -1) {
             game.Districts[i].Players.splice(delIndex, 1);
-            gamooo.playersAlive = gamooo.playersAlive - 1;
           }
         }
       }
