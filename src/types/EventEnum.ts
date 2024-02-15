@@ -11,18 +11,18 @@ import {
 import { GetRandomIndex } from "../helpers/helpFunctions";
 
 export enum Events {
-  NoEvent,
+  NoEvent=0,
   Death = 1,
   NoEvent2 = NoEvent,
-  Injury,
+  Injury = 2,
   NoEvent3 = NoEvent,
-  LightInjury,
+  LightInjury= 3,
   NoEvent4 = NoEvent,
-  Misc,
+  Misc = 4,
   NoEvent5 = NoEvent,
-  LightBuff,
+  LightBuff = 5,
   NoEvent6 = NoEvent,
-  Buff,
+  Buff= 6,
 }
 
 //This is a Test Feature.

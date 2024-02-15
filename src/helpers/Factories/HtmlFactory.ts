@@ -66,7 +66,7 @@ export function CreateDieHTML(game: Game): string[] {
   const htmlStrings: string[] = [];
 
   const listOfDist: District[] = FilterDistForDead(
-    game.Rounds[game.roundId - 1].Districts
+    game.Rounds[game.roundId].Districts
   );
 
   if (listOfDist.length > 0 && listOfDist[0].Players.length > 0) {
@@ -159,7 +159,7 @@ function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
    <h2>${player.Name}</h2>
       <div class="">
-          <img ${(!isWinner) ? "" : "class=\"winner-pic\""} src="${player.Url}"
+          <img ${!isWinner ? "" : 'class="winner-pic"'} src="${player.Url}"
               alt="${player.Name} Profile Picture">
       </div>
       <p>
@@ -189,4 +189,3 @@ export function CreateWinnerHTML(player: Player) {
   const result = template.replace("{0}", container);
   return result;
 }
-

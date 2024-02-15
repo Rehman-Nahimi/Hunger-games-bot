@@ -83,8 +83,9 @@ export class GameClass implements Game {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
-      console.log(`Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`);
-
+      console.log(
+        `Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`
+      );
 
       game.RoundGenerator();
 
@@ -173,9 +174,12 @@ export class GameClass implements Game {
           if (!player.IsAlive) {
             game.Districts[i].Players[j] = player;
             game.playersAlive -= 1;
-            const index = this.CheckDistrict(game.Rounds[game.roundId], this.Districts[i]);
+            const index = this.CheckDistrict(
+              game.Rounds[game.roundId],
+              this.Districts[i]
+            );
 
-            game.Rounds[game.roundId].Districts[index].Players.push(player); 
+            game.Rounds[game.roundId].Districts[index].Players.push(player);
           }
         }
       }
@@ -199,67 +203,6 @@ export class GameClass implements Game {
       (x) => x.DistNumber === district.DistNumber
     );
   }
-
-  //#region Maybe needed
-  // private FilterAlive() {
-  //   this.Rounds.push({ Districts: [], RoundNumber: this.roundId });
-
-  //   for (let i = 0; i < this.Districts.length; i++) {
-  //     // const players = game.Districts[i].Players.filter((x) => x.IsAlive !== true);
-
-  //     const playersManual: Player[] = [];
-  //     for (let index = 0; index < this.Districts[i].Players.length; index++) {
-  //       const element = this.Districts[i].Players[index];
-  //       if (element.IsAlive !== true) {
-  //         playersManual.push(element);
-  //       }
-  //     }
-
-  //     for (let index = 0; index < playersManual.length; index++) {
-  //       const element = playersManual[index];
-  //       console.log(`The player ${element.Name} and ${element.IsAlive}`);
-  //     }
-
-  //     if (playersManual.length > 0) {
-  //       this.Rounds[this.roundId].Districts.push({
-  //         DistNumber: this.Districts[i].DistNumber,
-  //         Players: playersManual,
-  //       });
-
-  //       for (let index = 0; index < playersManual.length; index++) {
-  //         const delIndex = this.Districts[i].Players.indexOf(
-  //           playersManual[index]
-  //         );
-
-  //         if (delIndex !== -1) {
-  //           this.Districts[i].Players.splice(delIndex, 1);
-  //         }
-  //       }
-  //     }
-  //     //Filters so we get the Amount of Alive people
-  //     const aliveCount = this.Districts[i].Players.filter(
-  //       (x) => x.IsAlive === true
-  //     ).length;
-
-  //     //If the alive Count is 0 then we can delete that District.
-  //     if (aliveCount === 0) {
-  //       this.Districts.splice(i, 1);
-  //     }
-  //   }
-
-  //   console.log(this.playersAlive);
-
-  //   for (let I = 0; I < this.Districts.length; I++) {
-  //     const element = this.Districts[I];
-  //     for (let j = 0; j < element.Players.length; j++) {
-  //       const player = element.Players[j];
-  //       console.log(
-  //         `District ${element.DistNumber} player ${player.Name} ${player.IsAlive}`
-  //       );
-  //     }
-  //   }
-  // }
-  //#endregion
 
   RoundGenerator() {
     const round: Round = {
@@ -309,6 +252,7 @@ export class GameClass implements Game {
             //Push to round thing the player with District
             index = this.CheckDistrict(round, this.Districts[i]);
             round.Districts[index].Players.push(focusedPlayer);
+            console.log(event.toString());
             break;
           case Events.LightInjury:
             focusedPlayer.SurvivalRate -= 0.35;
@@ -369,4 +313,3 @@ export class GameClass implements Game {
     this.Rounds.push(round);
   }
 }
-
