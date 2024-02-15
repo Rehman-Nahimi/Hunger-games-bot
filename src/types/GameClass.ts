@@ -7,7 +7,6 @@ import {
 import {
   CheckDeath,
   FilterDistForAlive,
-  FilterDistForDead,
   GetRandomIndex,
   MakeGame,
 } from "../helpers/helpFunctions";
@@ -61,38 +60,41 @@ export class GameClass implements Game {
   /*
     Bereite Spiel vor.
   */
-  // PrepareGame(intervalTime = 5000) {
-  //   this.intervalId = setInterval(
-  //     function (game) {
-  //       game.PlayGame(game);
-  //     },
-  //     1000,
-  //     this
-  //   );
-  // }
-
-  async PrepareGame(intervalTime = 5000) {
-    this.isplaying = true;
-
-    console.log("im prepare");
-    while (this.isplaying) {
-      this.PlayGame(this);
-    }
+  PrepareGame(intervalTime = 5000) {
+    this.intervalId = setInterval(
+      function (game) {
+        game.PlayGame(game);
+      },
+      intervalTime,
+      this
+    );
   }
 
-  private PlayGame(game: GameClass) {
+  // async PrepareGame(intervalTime = 5000) {
+  //   this.isplaying = true;
+
+  //   console.log("im prepare");
+  //   while (this.isplaying) {
+  //     this.PlayGame(this);
+  //   }
+  // }
+
+  private async PlayGame(game: GameClass) {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
-      console.log(`Playing the game with Instance ${game} ${game.roundId}`);
+      console.log(`Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`);
+
 
       game.RoundGenerator();
 
+      console.log(`after gen round alive ${game.playersAlive}`);
+
       //picture event
-      // const htmlRound = CreateRoundHtml(game);
-      // const roundBuffers = await GetPictureBuffer(htmlRound);
-      // const roundMessage = CeateRoundMessage(roundBuffers, game.roundId);
-      // SendMessage(game.Channel, roundMessage);
+      const htmlRound = CreateRoundHtml(game);
+      const roundBuffers = await GetPictureBuffer(htmlRound);
+      const roundMessage = CreateRoundMessage(roundBuffers, game.roundId);
+      SendMessage(game.Channel, roundMessage);
 
       //Filter the dead players out, so the rest works fine.
       game.Districts = FilterDistForAlive(game.Districts);
@@ -103,21 +105,19 @@ export class GameClass implements Game {
       //Filter again afterwards.
       game.Districts = FilterDistForAlive(game.Districts);
 
-      //picture dies
-
       // The async Method Call to not block the Thread.
-      // await GameClass.SendRoundMessages(game);
+      await GameClass.SendRoundMessages(game);
     } else {
       // Needed to end the Set-Interval (Automated round calls).
       if (game.intervalId !== null) {
         clearTimeout(game.intervalId);
         game.intervalId = null;
       }
-      // const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
-      // const buffer = await GetPictureBufferSingle(winnerHtml);
+      const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
+      const buffer = await GetPictureBufferSingle(winnerHtml);
 
-      // const message = CreateEndMessage(buffer);
-      // SendMessage(game.Channel, message);
+      const message = CreateEndMessage(buffer);
+      SendMessage(game.Channel, message);
 
       console.log("🎮 Game Ended !!!!");
 
@@ -173,6 +173,9 @@ export class GameClass implements Game {
           if (!player.IsAlive) {
             game.Districts[i].Players[j] = player;
             game.playersAlive -= 1;
+            const index = this.CheckDistrict(game.Rounds[game.roundId], this.Districts[i]);
+
+            game.Rounds[game.roundId].Districts[index].Players.push(player); 
           }
         }
       }

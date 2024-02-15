@@ -1,8 +1,6 @@
 import { District } from "../types/District";
-import { Events, EzMapSzenario, randomEnum } from "../types/EventEnum";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
-import { Round } from "../types/Round";
 import { slowDeathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
