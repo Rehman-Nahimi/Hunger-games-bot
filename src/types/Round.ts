@@ -1,7 +1,9 @@
 import { District } from "./District";
 
 export interface Round {
-    Districts : District[],
+    DistrictAfterRound: District[];
 
-    RoundNumber: number,
+  DistrictBeforeRound: District[];
+
+  RoundNumber: number;
 }

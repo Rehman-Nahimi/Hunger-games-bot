@@ -25,3 +25,11 @@ export async function GetPictureBufferSingle(htmlString: string) {
 
   return buffer;
 }
+
+// Creates Picture Buffers from an Array of Strings Representing an Image in HTML-Form.
+export function GetPictureBufferSingleSync(htmlString: string) {
+  const image = nodeHtmlToImage({
+    html: htmlString,
+  });
+  return image;
+}
