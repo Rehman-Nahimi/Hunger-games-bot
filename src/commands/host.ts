@@ -112,7 +112,7 @@ async function CollectUsers(
       channel.send("The Collection ended");
 
       const myGame = new GameClass(players, channel);
-      myGame.PrepareGame(10_000);
+      myGame.PrepareGame(1_000);
     });
   });
 }

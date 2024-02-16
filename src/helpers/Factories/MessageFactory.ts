@@ -1,4 +1,5 @@
 import { AttachmentBuilder, EmbedBuilder } from "discord.js";
+import { client } from "../..";
 
 export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
   const myAttachments = CreateMessageAttachments(
@@ -16,10 +17,10 @@ export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
   return result;
 }
 
-export function CreateDieMessage(buffers: Buffer[]) {
+export function CreateDieMessage(buffers: Buffer[], roundNumber: number) {
   const myAttachments = CreateMessageAttachments(
     buffers,
-    "Death of Round",
+    `Death of Round ${roundNumber}`,
     0xff0000
   );
 
@@ -33,10 +34,10 @@ export function CreateDieMessage(buffers: Buffer[]) {
   return result;
 }
 
-export function CreateEndMessage(buffer: Buffer) {
+export  function CreateEndMessage(buffer : Buffer) {
   const buffers: Buffer[] = [];
   buffers.push(buffer);
-  
+
   const myAttachments = CreateMessageAttachments(
     buffers,
     "The WINNER",
@@ -45,7 +46,7 @@ export function CreateEndMessage(buffer: Buffer) {
 
   //Create the Result Object.
   const result = {
-    content: "Die Images",
+    content: "The Winner",
     embeds: myAttachments[0],
     files: myAttachments[1],
   };
@@ -56,7 +57,7 @@ function CreateMessageAttachments(
   buffers: Buffer[],
   title: string,
   embedColor = 0x0099ff
-):[EmbedBuilder[], AttachmentBuilder[]] {
+): [EmbedBuilder[], AttachmentBuilder[]] {
   //
   const exampleEmbeds: EmbedBuilder[] = new Array<EmbedBuilder>(buffers.length);
   const myAttachments: AttachmentBuilder[] = new Array<AttachmentBuilder>(
@@ -67,7 +68,12 @@ function CreateMessageAttachments(
   for (let i = 0; i < buffers.length; i++) {
     const exampleEmbed = new EmbedBuilder()
       .setTitle(title)
-      .setColor(embedColor);
+      .setColor(embedColor)
+      .setTimestamp()
+      .setFooter({
+        text: "Hosted by Hunger games bot",
+        iconURL: `${client.user?.avatarURL()}`,
+      });
 
     const myAttachment = new AttachmentBuilder(buffers[i], {
       name: `${title.replace(/\s/g, "")}_${i}.png`,
@@ -80,6 +86,6 @@ function CreateMessageAttachments(
     myAttachments[i] = myAttachment;
   }
 
-  return [exampleEmbeds, myAttachments] ;
+  return [exampleEmbeds, myAttachments];
 }
 
