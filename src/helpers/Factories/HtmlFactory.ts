@@ -1,5 +1,4 @@
 import { District } from "../../types/District";
-import { Game } from "../../types/Game";
 import { NewIntervalMap } from "../intervalMap";
 import fs from "fs";
 import { FilterDistForDead } from "../helpFunctions";
@@ -160,7 +159,7 @@ function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
    <h2>${player.Name}</h2>
       <div class="">
-          <img ${!isWinner ? "" : 'class="winner-pic"'} src="${player.Url}"
+          <img ${!isWinner ? "" : "class=\"winner-pic\""} src="${player.Url}"
               alt="${player.Name} Profile Picture">
       </div>
       <p>
