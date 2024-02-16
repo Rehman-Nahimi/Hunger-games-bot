@@ -13,7 +13,7 @@ import {
 import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { Channel, TextBasedChannel } from "discord.js";
+import { TextBasedChannel } from "discord.js";
 import { dummies } from "../helpers/dummyPlayers";
 import {
   GetPictureBuffer,
@@ -28,7 +28,6 @@ import {
 import { Round } from "./Round";
 import { SendMessage } from "../helpers/messageHandler";
 import { Events, EzMapSzenario, randomEnum } from "./EventEnum";
-import { threadId } from "worker_threads";
 
 export class GameClass implements Game {
   Districts: District[];
@@ -141,7 +140,6 @@ export class GameClass implements Game {
 
   private LetPlayersDie(game: GameClass) {
     //Goes Trough each District to then look if someone Dies.
-
     for (let i = 0; i < game.Districts.length; i++) {
       for (let j = 0; j < game.Districts[i].Players.length; j++) {
         if (game.playersAlive > 1) {
@@ -206,7 +204,6 @@ export class GameClass implements Game {
           case Events.Death:
             if (this.playersAlive > 1 && amountDie > 0) {
               focusedPlayer.IsAlive = false;
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               focusedPlayer.Events.push(
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
@@ -226,7 +223,6 @@ export class GameClass implements Game {
             break;
           case Events.Injury:
             focusedPlayer.SurvivalRate -= 0.35;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             focusedPlayer.Events.push(
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
@@ -241,7 +237,6 @@ export class GameClass implements Game {
             break;
           case Events.LightInjury:
             focusedPlayer.SurvivalRate -= 0.35;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             focusedPlayer.Events.push(
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
@@ -254,7 +249,6 @@ export class GameClass implements Game {
             round.DistrictBeforeRound[index].Players.push(focusedPlayer);
             break;
           case Events.Misc:
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             focusedPlayer.Events.push(
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
@@ -268,7 +262,6 @@ export class GameClass implements Game {
             break;
           case Events.LightBuff:
             focusedPlayer.SurvivalRate += 0.35;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             focusedPlayer.Events.push(
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
@@ -282,7 +275,6 @@ export class GameClass implements Game {
             break;
           case Events.Buff:
             focusedPlayer.SurvivalRate += 0.55;
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             focusedPlayer.Events.push(
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
