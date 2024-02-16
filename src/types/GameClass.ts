@@ -87,6 +87,9 @@ export class GameClass implements Game {
       this.LetPlayersDie(game);
       //Filter again afterwards.
       game.Districts = FilterDistForAlive(game.Districts);
+      game.Rounds[this.roundId].AliveDistricts = game.Districts; 
+    
+      game.roundId++;
     } else {
       this.playing = false;
       console.log("🎮 Game Ended !!!!");
@@ -163,7 +166,6 @@ export class GameClass implements Game {
     this.Districts = FilterDistForAlive(game.Districts);
 
     console.log(`Number of Player alive ${game.playersAlive}`);
-    game.roundId++;
   }
 
   private CheckDistrict(targetDistricts: District[], district: District) {
@@ -183,6 +185,7 @@ export class GameClass implements Game {
     const round: Round = {
       DistrictBeforeRound: [],
       DistrictAfterRound: [],
+      AliveDistricts: [], 
       RoundNumber: this.roundId,
     };
 
@@ -328,7 +331,7 @@ export class GameClass implements Game {
       await GameClass.SendRoundMessages(
         game.Channel,
         game.Rounds[index],
-        game.Districts,
+        game.Rounds[index].AliveDistricts,
         index
       );
       

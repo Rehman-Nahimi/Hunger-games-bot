@@ -5,5 +5,7 @@ export interface Round {
 
   DistrictBeforeRound: District[];
 
+  AliveDistricts: District[];
+
   RoundNumber: number;
 }
