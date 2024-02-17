@@ -40,7 +40,7 @@ export const deathScenario = new SingleScenario([
   "{0} fell over and hit their head on a rock.",
   "Lions corner {0}. He is bitten into viciously",
   "{0} falls off the map",
-  "A supply crate drops on the {0}'s head. {0} dies",
+  "A supply crate drops on the {0}'s head. They die",
   "{0} accidentally cuts himself and gets infected. ",
 ]);
 
