@@ -1,7 +1,6 @@
 import { District } from "../types/District";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
-import { Round } from "../types/Round";
 import { slowDeathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
@@ -82,20 +81,20 @@ const playersDead = roundDie.flatMap((x)=>x.Players);
       const dist:District= {
         DistNumber: element.DistNumber,
         Players: []
-      }
+      };
      
       for (let index = 0; index < filteredPlayers.length; index++) {
         const element = filteredPlayers[index];
-        const playe:Player = {
+        const player:Player = {
           Events: [],
           IsAlive: element.IsAlive,
           Name: element.Name,
           SurvivalRate: element.SurvivalRate,
           Url: element.Url
         }; 
-        element.Events.forEach((x)=> playe.Events.push(x)); 
+        element.Events.forEach((x)=> player.Events.push(x)); 
 
-        dist.Players.push(playe); 
+        dist.Players.push(player); 
       }
 
       result.push(dist); 
