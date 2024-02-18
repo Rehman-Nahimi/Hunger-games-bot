@@ -14,7 +14,6 @@ import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { TextBasedChannel } from "discord.js";
-import { dummies } from "../helpers/dummyPlayers";
 import {
   GetPictureBuffer,
   GetPictureBufferSingle,
@@ -40,21 +39,9 @@ export class GameClass implements Game {
   private playing = true;
 
   constructor(players: Player[], channel: TextBasedChannel) {
-    const playDumm: Player[] = [];
-
-    dummies.forEach((element) => {
-      playDumm.push({
-        Events: [],
-        IsAlive: element.IsAlive,
-        Name: element.Name,
-        Url: element.Url,
-        SurvivalRate: 1,
-      });
-    });
-
     this.roundId = 0;
-    this.playersAlive = playDumm.length;
-    this.Districts = MakeGame(playDumm).Districts;
+    this.playersAlive = players.length;
+    this.Districts = MakeGame(players).Districts;
     this.Channel = channel;
     this.Rounds = [];
     this.delay = 1_000;
@@ -69,14 +56,20 @@ export class GameClass implements Game {
     const buffers = await GetPictureBuffer(str);
     const message = CreateRoundMessage(buffers, this.roundId);
     //Sends the Feedback to the Server.
-    SendMessage(
+    await SendMessage(
       this.Channel,
-      "----------------------------------------------------"+
-       "\r\nThe Players\r\n"+
-       "----------------------------------------------------"
+      "----------------------------------------------------" +
+        "\r\nThe Players\r\n" +
+        "----------------------------------------------------"
     );
-    // game.Channel.send(CreateDieMessage(index + 1));
-    SendMessage(this.Channel, message);
+
+    if (
+      message.embeds.length !== 0 &&
+      message.files.length !== 0 
+    ) {
+      //Sends the Feedback to the Server.
+      await SendMessage(this.Channel, message);
+    }
 
     const round: Round = {
       HadEvent: [],
@@ -103,12 +96,18 @@ export class GameClass implements Game {
       // console.log(`after gen round alive ${game.playersAlive}`);
 
       //Filter the dead players out, so the rest works fine.
-      game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund,   game.Districts);
+      game.Districts = FilterDistForAlive(
+        game.Rounds[game.roundId].DiedInROund,
+        game.Districts
+      );
 
       //Lets People Die.
       this.LetPlayersDie(game);
       //Filter again afterwards.
-      game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund, game.Districts);
+      game.Districts = FilterDistForAlive(
+        game.Rounds[game.roundId].DiedInROund,
+        game.Districts
+      );
 
       // console.log(`Number of Player alive ${game.playersAlive}`);
 
@@ -145,7 +144,10 @@ export class GameClass implements Game {
     const dieBuffer = await GetPictureBuffer(dieHTML);
     const dieMessage = CreateDieMessage(dieBuffer, id);
 
-    if (dieMessage.embeds.length !==0 && dieMessage.files.length!==0&& dieMessage.content!== "" ) {
+    if (
+      dieMessage.embeds.length !== 0 &&
+      dieMessage.files.length !== 0
+    ) {
       //Sends the Feedback to the Server.
       SendMessage(channel, dieMessage);
     }
@@ -184,7 +186,6 @@ export class GameClass implements Game {
         }
       }
     }
-
   }
 
   private CheckDistrict(targetDistricts: District[], district: District) {
@@ -221,6 +222,7 @@ export class GameClass implements Game {
           Name: this.Districts[i].Players[j].Name,
           Url: this.Districts[i].Players[j].Url,
           SurvivalRate: this.Districts[i].Players[j].SurvivalRate,
+          User: this.Districts[i].Players[j].User
         };
 
         //Gets the Event to match to.
@@ -310,7 +312,14 @@ export class GameClass implements Game {
   }
 
   private async GameMessagesHandler(game: GameClass) {
-    for (let index = 0; index < game.Rounds.length; index++) {
+    for (let index = 1; index < game.Rounds.length; index++) {
+
+     await SendMessage(
+        this.Channel,
+        "----------------------------------------------------" +
+          "\r\nNew Round\r\n" +
+          "----------------------------------------------------"
+      );
       //picture event
       const htmlRound = CreateRoundHtml(game.Rounds[index]);
 
@@ -320,19 +329,23 @@ export class GameClass implements Game {
           element
         )) as Buffer;
         const roundMessage = CreateRoundMessage([roundBuffers], index);
-        SendMessage(game.Channel, roundMessage);
-
+        if (
+          roundMessage.embeds.length !== 0 &&
+          roundMessage.files.length !== 0 
+        ) {
+          SendMessage(game.Channel, roundMessage);
+        }
         console.log("Sended something ");
         await delay(game.delay);
       }
 
-        // The async Method Call to not block the Thread.
-        await GameClass.SendRoundMessages(
-          game.Channel,
-          game.Rounds[index],
-          game.Rounds[index].AliveDistricts,
-          index
-          );
+      // The async Method Call to not block the Thread.
+      await GameClass.SendRoundMessages(
+        game.Channel,
+        game.Rounds[index],
+        game.Rounds[index].AliveDistricts,
+        index
+      );
 
       console.log("Sended something ");
       await delay(game.delay);
@@ -341,11 +354,15 @@ export class GameClass implements Game {
     const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
     const buffer = await GetPictureBufferSingle(winnerHtml);
 
-    const message = CreateEndMessage(buffer);
-    SendMessage(game.Channel, message);
-
-    console.log("Sended something ");
-    await delay(game.delay);
+    try {
+      const message = CreateEndMessage(buffer, game.Districts[0].Players[0].User.id);
+      SendMessage(game.Channel, message);
+    } catch (error) {
+      //Only log error
+      console.log(error);
+    }
+      console.log("Sended something ");
+    console.log("Ended Sending");
   }
 }
 

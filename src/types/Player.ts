@@ -1,3 +1,5 @@
+import { User } from "discord.js";
+
 export interface Player {
   Name: string;
 
@@ -8,4 +10,6 @@ export interface Player {
   SurvivalRate: number;
 
   Events: string[];
+
+  User: User; 
 }
