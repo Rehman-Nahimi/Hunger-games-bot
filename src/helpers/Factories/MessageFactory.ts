@@ -26,7 +26,7 @@ export function CreateDieMessage(buffers: Buffer[], roundNumber: number) {
 
   //Create the Result Object.
   const result = {
-    content: "Die Images",
+    content: " ",
     embeds: myAttachments[0],
     files: myAttachments[1],
   };

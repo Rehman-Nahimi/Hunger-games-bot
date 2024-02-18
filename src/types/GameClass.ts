@@ -71,7 +71,9 @@ export class GameClass implements Game {
     //Sends the Feedback to the Server.
     SendMessage(
       this.Channel,
-      "----------------------------------------------------"
+      "----------------------------------------------------"+
+       "\r\nThe Players\r\n"+
+       "----------------------------------------------------"
     );
     // game.Channel.send(CreateDieMessage(index + 1));
     SendMessage(this.Channel, message);
@@ -85,7 +87,6 @@ export class GameClass implements Game {
     this.Rounds.push(round);
     this.roundId++;
 
-    console.log("im prepare");
     while (this.playing) {
       this.PlayGame(this);
     }
@@ -94,12 +95,12 @@ export class GameClass implements Game {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
-      console.log(
-        `Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`
-      );
+      // console.log(
+      //   `Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`
+      // );
 
       game.RoundGenerator();
-      console.log(`after gen round alive ${game.playersAlive}`);
+      // console.log(`after gen round alive ${game.playersAlive}`);
 
       //Filter the dead players out, so the rest works fine.
       game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund,   game.Districts);
@@ -109,13 +110,14 @@ export class GameClass implements Game {
       //Filter again afterwards.
       game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund, game.Districts);
 
-      console.log(`Number of Player alive ${game.playersAlive}`);
+      // console.log(`Number of Player alive ${game.playersAlive}`);
 
       game.Rounds[this.roundId].AliveDistricts = game.Districts;
 
       game.roundId++;
     } else {
       this.playing = false;
+
       console.log("🎮 Game Ended !!!!");
       for (let I = 0; I < game.Districts.length; I++) {
         const element = game.Districts[I];
@@ -142,25 +144,24 @@ export class GameClass implements Game {
     //Gets the Converted Picture buffers
     const dieBuffer = await GetPictureBuffer(dieHTML);
     const dieMessage = CreateDieMessage(dieBuffer, id);
-    //Sends the Feedback to the Server.
-    SendMessage(
-      channel,
-      "----------------------------------------------------"
-    );
-    SendMessage(channel, dieMessage);
 
-    //Gets the Strings that need to be converted.
-    const str = CreateGameHtml(livingDistrict);
-    //Gets the Converted Picture buffers
-    const buffers = await GetPictureBuffer(str);
-    const message = CreateRoundMessage(buffers, id);
-    //Sends the Feedback to the Server.
-    SendMessage(
-      channel,
-      "----------------------------------------------------"
-    );
-    // game.Channel.send(CreateDieMessage(index + 1));
-    SendMessage(channel, message);
+    if (dieMessage.embeds.length !==0 && dieMessage.files.length!==0&& dieMessage.content!== "" ) {
+      //Sends the Feedback to the Server.
+      SendMessage(channel, dieMessage);
+    }
+
+    // //Gets the Strings that need to be converted.
+    // const str = CreateGameHtml(livingDistrict);
+    // //Gets the Converted Picture buffers
+    // const buffers = await GetPictureBuffer(str);
+    // const message = CreateRoundMessage(buffers, id);
+    // //Sends the Feedback to the Server.
+    // SendMessage(
+    //   channel,
+    //   "----------------------------------------------------"
+    // );
+    // // game.Channel.send(CreateDieMessage(index + 1));
+    // SendMessage(channel, message);
   }
 
   private LetPlayersDie(game: GameClass) {
@@ -241,9 +242,6 @@ export class GameClass implements Game {
 
               this.playersAlive -= 1;
               amountDie -= 1;
-              console.log(
-                `${focusedPlayer.Name} died  check ${focusedPlayer.IsAlive}`
-              );
             }
             break;
           case Events.Injury:
@@ -328,13 +326,13 @@ export class GameClass implements Game {
         await delay(game.delay);
       }
 
-      // The async Method Call to not block the Thread.
-      await GameClass.SendRoundMessages(
-        game.Channel,
-        game.Rounds[index],
-        game.Rounds[index].AliveDistricts,
-        index
-      );
+        // The async Method Call to not block the Thread.
+        await GameClass.SendRoundMessages(
+          game.Channel,
+          game.Rounds[index],
+          game.Rounds[index].AliveDistricts,
+          index
+          );
 
       console.log("Sended something ");
       await delay(game.delay);

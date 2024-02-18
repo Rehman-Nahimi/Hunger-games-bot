@@ -59,7 +59,7 @@ export function CreateGameHtml(game: District[]): string[] {
   return htmlStrings;
 }
 
-const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
+const DieTitel = "<h1>🤓--R.I.P. Bozos--🤓</h1>";
 export function CreateDieHTML(game: Round): string[] {
   //Create the HTML for the Dead Players.
   const htmlStrings: string[] = [];
@@ -133,7 +133,7 @@ export function CreateRoundHtml(game: Round): string[] {
       ) {
         const element = game.HadEvent[i].Players[j];
 
-        districtHelper += CreatePlayerHTML(element);
+        districtHelper += CreatePlayerRoundHTML(element);
         x++;
 
         if (
@@ -150,6 +150,20 @@ export function CreateRoundHtml(game: Round): string[] {
     }
   }
   return htmlStrings;
+}
+
+function CreatePlayerRoundHTML(player: Player): string {
+  const result = ` <div class = "DistContainer">
+      <div class="">
+          <img src="${player.Url}"
+              alt="${player.Name} Profile Picture">
+      </div>
+      <p>
+        ${player.Events[player.Events.length - 1]} 
+      </p>
+  </div> `;
+
+  return result;
 }
 
 function CreatePlayerHTML(player: Player, isWinner = false): string {
