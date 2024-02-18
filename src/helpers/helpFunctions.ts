@@ -1,6 +1,7 @@
 import { District } from "../types/District";
 import { Game } from "../types/Game";
 import { Player } from "../types/Player";
+import { Round } from "../types/Round";
 import { slowDeathScenario } from "./eventArrays";
 import { NewPlayerMap } from "./playerMap";
 
@@ -68,18 +69,36 @@ export function FilterDistForDead(districts: District[]) {
   return result;
 }
 
-export function FilterDistForAlive(districts: District[]) {
+export function FilterDistForAlive(roundDie: District[],   districts: District[]) {
   const result: District[] = [];
+
+const playersDead = roundDie.flatMap((x)=>x.Players); 
 
   for (let i = 0; i < districts.length; i++) {
     const element = districts[i];
 
-    const filteredPlayers = element.Players.filter((x) => x.IsAlive === true);
+    const filteredPlayers = element.Players.filter((x) => x.IsAlive === true && playersDead.findIndex((dead)=> dead.Name === x.Name)=== -1 );
     if (filteredPlayers.length > 0) {
-      result.push({
+      const dist:District= {
         DistNumber: element.DistNumber,
-        Players: filteredPlayers,
-      });
+        Players: []
+      }
+     
+      for (let index = 0; index < filteredPlayers.length; index++) {
+        const element = filteredPlayers[index];
+        const playe:Player = {
+          Events: [],
+          IsAlive: element.IsAlive,
+          Name: element.Name,
+          SurvivalRate: element.SurvivalRate,
+          Url: element.Url
+        }; 
+        element.Events.forEach((x)=> playe.Events.push(x)); 
+
+        dist.Players.push(playe); 
+      }
+
+      result.push(dist); 
     }
   }
   return result;

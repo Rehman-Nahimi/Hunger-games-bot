@@ -62,8 +62,30 @@ export class GameClass implements Game {
 
   async PrepareGame(intervalTime = 5000) {
     this.delay = intervalTime;
-    console.log("im prepare");
 
+    //Gets the Strings that need to be converted.
+    const str = CreateGameHtml(this.Districts);
+    //Gets the Converted Picture buffers
+    const buffers = await GetPictureBuffer(str);
+    const message = CreateRoundMessage(buffers, this.roundId);
+    //Sends the Feedback to the Server.
+    SendMessage(
+      this.Channel,
+      "----------------------------------------------------"
+    );
+    // game.Channel.send(CreateDieMessage(index + 1));
+    SendMessage(this.Channel, message);
+
+    const round: Round = {
+      HadEvent: [],
+      DiedInROund: [],
+      AliveDistricts: this.Districts,
+      RoundNumber: this.roundId,
+    };
+    this.Rounds.push(round);
+    this.roundId++;
+
+    console.log("im prepare");
     while (this.playing) {
       this.PlayGame(this);
     }
@@ -80,14 +102,17 @@ export class GameClass implements Game {
       console.log(`after gen round alive ${game.playersAlive}`);
 
       //Filter the dead players out, so the rest works fine.
-      game.Districts = FilterDistForAlive(game.Districts);
+      game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund,   game.Districts);
 
       //Lets People Die.
       this.LetPlayersDie(game);
       //Filter again afterwards.
-      game.Districts = FilterDistForAlive(game.Districts);
-      game.Rounds[this.roundId].AliveDistricts = game.Districts; 
-    
+      game.Districts = FilterDistForAlive(game.Rounds[game.roundId].DiedInROund, game.Districts);
+
+      console.log(`Number of Player alive ${game.playersAlive}`);
+
+      game.Rounds[this.roundId].AliveDistricts = game.Districts;
+
       game.roundId++;
     } else {
       this.playing = false;
@@ -149,21 +174,16 @@ export class GameClass implements Game {
             game.Districts[i].Players[j] = player;
             game.playersAlive -= 1;
             const index = this.CheckDistrict(
-              game.Rounds[game.roundId].DistrictAfterRound,
+              game.Rounds[game.roundId].DiedInROund,
               this.Districts[i]
             );
 
-            game.Rounds[game.roundId].DistrictAfterRound[index].Players.push(
-              player
-            );
+            game.Rounds[game.roundId].DiedInROund[index].Players.push(player);
           }
         }
       }
     }
 
-    this.Districts = FilterDistForAlive(game.Districts);
-
-    console.log(`Number of Player alive ${game.playersAlive}`);
   }
 
   private CheckDistrict(targetDistricts: District[], district: District) {
@@ -181,9 +201,9 @@ export class GameClass implements Game {
 
   RoundGenerator() {
     const round: Round = {
-      DistrictBeforeRound: [],
-      DistrictAfterRound: [],
-      AliveDistricts: [], 
+      HadEvent: [],
+      DiedInROund: [],
+      AliveDistricts: [],
       RoundNumber: this.roundId,
     };
 
@@ -194,7 +214,13 @@ export class GameClass implements Game {
 
     for (let i = 0; i < this.Districts.length; i++) {
       for (let j = 0; j < this.Districts[i].Players.length; j++) {
-        const focusedPlayer = this.Districts[i].Players[j];
+        const focusedPlayer: Player = {
+          Events: [],
+          IsAlive: this.Districts[i].Players[j].IsAlive,
+          Name: this.Districts[i].Players[j].Name,
+          Url: this.Districts[i].Players[j].Url,
+          SurvivalRate: this.Districts[i].Players[j].SurvivalRate,
+        };
 
         //Gets the Event to match to.
         const event = randomEnum(Events);
@@ -210,15 +236,14 @@ export class GameClass implements Game {
               );
 
               //Push to round thing the player with District
-              index = this.CheckDistrict(
-                round.DistrictBeforeRound,
-                this.Districts[i]
-              );
-              round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+              index = this.CheckDistrict(round.DiedInROund, this.Districts[i]);
+              round.DiedInROund[index].Players.push(focusedPlayer);
 
               this.playersAlive -= 1;
               amountDie -= 1;
-              console.log("someone died");
+              console.log(
+                `${focusedPlayer.Name} died  check ${focusedPlayer.IsAlive}`
+              );
             }
             break;
           case Events.Injury:
@@ -228,12 +253,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
-            console.log(event.toString());
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.LightInjury:
             focusedPlayer.SurvivalRate -= 0.35;
@@ -242,11 +263,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.Misc:
             focusedPlayer.Events.push(
@@ -254,11 +272,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.LightBuff:
             focusedPlayer.SurvivalRate += 0.35;
@@ -267,11 +282,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.Buff:
             focusedPlayer.SurvivalRate += 0.55;
@@ -280,11 +292,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.NoEvent:
           //break to default no event
@@ -314,7 +323,7 @@ export class GameClass implements Game {
         )) as Buffer;
         const roundMessage = CreateRoundMessage([roundBuffers], index);
         SendMessage(game.Channel, roundMessage);
-     
+
         console.log("Sended something ");
         await delay(game.delay);
       }
@@ -326,7 +335,7 @@ export class GameClass implements Game {
         game.Rounds[index].AliveDistricts,
         index
       );
-      
+
       console.log("Sended something ");
       await delay(game.delay);
     }
