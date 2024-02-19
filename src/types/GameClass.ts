@@ -50,6 +50,9 @@ export class GameClass implements Game {
   async PrepareGame(intervalTime = 5000) {
     this.delay = intervalTime;
 
+    if (this.playersAlive ===0 ) {
+      return;
+    }
     //Gets the Strings that need to be converted.
     const str = CreateGameHtml(this.Districts);
     //Gets the Converted Picture buffers
