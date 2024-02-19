@@ -103,12 +103,12 @@ async function CollectUsers(
 
         
         players.push({
+          User: `<@${x.id}>`, 
           IsAlive: true,
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
           Events: [],
           SurvivalRate: 1,
-          User: `<@${x.id}>`
         });
       });
       channel.send("The Collection ended");

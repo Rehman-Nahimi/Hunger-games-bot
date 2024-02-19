@@ -90,7 +90,8 @@ const playersDead = roundDie.flatMap((x)=>x.Players);
           IsAlive: element.IsAlive,
           Name: element.Name,
           SurvivalRate: element.SurvivalRate,
-          Url: element.Url
+          Url: element.Url,
+          User : element.User
         }; 
         element.Events.forEach((x)=> player.Events.push(x)); 
 
