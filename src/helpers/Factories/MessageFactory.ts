@@ -46,7 +46,7 @@ export function CreateEndMessage(buffer: Buffer, userId: string) {
 
   //Create the Result Object.
   const result = {
-    content: `The Winner is <@${userId}>, congratulations.`,
+    content: `The Winner is ${userId}, congratulations.`,
     embeds: myAttachments[0],
     files: myAttachments[1],
   };

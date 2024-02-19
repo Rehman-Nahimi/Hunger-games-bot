@@ -101,13 +101,14 @@ async function CollectUsers(
       userIds?.forEach((x) => {
         const urlStr = x.avatarURL();
 
+        
         players.push({
           IsAlive: true,
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
           Events: [],
           SurvivalRate: 1,
-          User: x
+          User: `<@${x.id}>`
         });
       });
       channel.send("The Collection ended");

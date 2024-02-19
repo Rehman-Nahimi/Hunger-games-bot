@@ -11,5 +11,5 @@ export interface Player {
 
   Events: string[];
 
-  User: User; 
+  User: string; 
 }

@@ -350,12 +350,12 @@ export class GameClass implements Game {
       console.log("Sended something ");
       await delay(game.delay);
     }
+    try {
 
     const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
     const buffer = await GetPictureBufferSingle(winnerHtml);
 
-    try {
-      const message = CreateEndMessage(buffer, game.Districts[0].Players[0].User.id);
+      const message = CreateEndMessage(buffer, game.Districts[0].Players[0].User);
       SendMessage(game.Channel, message);
     } catch (error) {
       //Only log error
