@@ -4,7 +4,11 @@
 			"path": "."
 		}
 	],
-	"settings": {},
+	"settings": {
+		"cSpell.words": [
+			"delaytime"
+		]
+	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [

@@ -40,6 +40,14 @@ export const data = new SlashCommandBuilder()
       .setName("players")
       .setDescription("How many people will be playing?")
       .setRequired(true)
+  )
+  .addStringOption((delayTime) =>
+    delayTime
+      .setName("delaytime")
+      .setDescription(
+        "How much time till the next Picture (should be at least 2s)"
+      )
+      .setRequired(true)
   );
 
 export async function execute(interaction: CommandInteraction) {
@@ -50,6 +58,9 @@ export async function execute(interaction: CommandInteraction) {
   const playerCount = info.getInteger("players");
   const guildId = interaction.guildId;
   const numbTime = ms(timer as string);
+  const delayTime = info.getString("delaytime");
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const delayAsNumb = ms(delayTime!);
 
   if (guildId) {
     const exampleEmbed = new EmbedBuilder()
@@ -63,7 +74,7 @@ export async function execute(interaction: CommandInteraction) {
       });
 
     if (message && channel && playerCount) {
-      CollectUsers(channel, exampleEmbed, numbTime, playerCount);
+      CollectUsers(channel, exampleEmbed, numbTime, playerCount, delayAsNumb);
     }
   }
   return interaction.reply({
@@ -76,7 +87,8 @@ async function CollectUsers(
   channel: TextBasedChannel,
   embedMessage: EmbedBuilder,
   timer: number,
-  playerCount: number
+  playerCount: number, 
+  delay: number
 ) {
   channel.send({ embeds: [embedMessage] }).then((embedMessage) => {
     embedMessage.react("👍");
@@ -102,17 +114,18 @@ async function CollectUsers(
         const urlStr = x.avatarURL();
 
         players.push({
+          User: `<@${x.id}>`,
           IsAlive: true,
           Name: x.username,
           Url: urlStr !== null ? urlStr : "",
           Events: [],
-          SurvivalRate: 1
+          SurvivalRate: 1,
         });
       });
       channel.send("The Collection ended");
 
       const myGame = new GameClass(players, channel);
-      myGame.PrepareGame(1_000);
+      myGame.PrepareGame(delay);
     });
   });
 }

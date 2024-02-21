@@ -14,7 +14,6 @@ import { District } from "./District";
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { TextBasedChannel } from "discord.js";
-import { dummies } from "../helpers/dummyPlayers";
 import {
   GetPictureBuffer,
   GetPictureBufferSingle,
@@ -40,21 +39,9 @@ export class GameClass implements Game {
   private playing = true;
 
   constructor(players: Player[], channel: TextBasedChannel) {
-    const playDumm: Player[] = [];
-
-    dummies.forEach((element) => {
-      playDumm.push({
-        Events: [],
-        IsAlive: element.IsAlive,
-        Name: element.Name,
-        Url: element.Url,
-        SurvivalRate: 1,
-      });
-    });
-
     this.roundId = 0;
-    this.playersAlive = playDumm.length;
-    this.Districts = MakeGame(playDumm).Districts;
+    this.playersAlive = players.length;
+    this.Districts = MakeGame(players).Districts;
     this.Channel = channel;
     this.Rounds = [];
     this.delay = 1_000;
@@ -62,7 +49,39 @@ export class GameClass implements Game {
 
   async PrepareGame(intervalTime = 5000) {
     this.delay = intervalTime;
-    console.log("im prepare");
+
+    if (this.playersAlive ===0 ) {
+      return;
+    }
+    //Gets the Strings that need to be converted.
+    const str = CreateGameHtml(this.Districts);
+    //Gets the Converted Picture buffers
+    const buffers = await GetPictureBuffer(str);
+    const message = CreateRoundMessage(buffers, this.roundId);
+    //Sends the Feedback to the Server.
+    await SendMessage(
+      this.Channel,
+      "----------------------------------------------------" +
+        "\r\nThe Players\r\n" +
+        "----------------------------------------------------"
+    );
+
+    if (
+      message.embeds.length !== 0 &&
+      message.files.length !== 0 
+    ) {
+      //Sends the Feedback to the Server.
+      await SendMessage(this.Channel, message);
+    }
+
+    const round: Round = {
+      HadEvent: [],
+      DiedInROund: [],
+      AliveDistricts: this.Districts,
+      RoundNumber: this.roundId,
+    };
+    this.Rounds.push(round);
+    this.roundId++;
 
     while (this.playing) {
       this.PlayGame(this);
@@ -72,25 +91,35 @@ export class GameClass implements Game {
     // Here out the Logic for the game rounds or start it.
     // Another way to check if only one player is Alive.
     if (game.playersAlive > 1) {
-      console.log(
-        `Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`
-      );
+      // console.log(
+      //   `Playing the game with Instance ${game} ${game.roundId} alive ${game.playersAlive}`
+      // );
 
       game.RoundGenerator();
-      console.log(`after gen round alive ${game.playersAlive}`);
+      // console.log(`after gen round alive ${game.playersAlive}`);
 
       //Filter the dead players out, so the rest works fine.
-      game.Districts = FilterDistForAlive(game.Districts);
+      game.Districts = FilterDistForAlive(
+        game.Rounds[game.roundId].DiedInROund,
+        game.Districts
+      );
 
       //Lets People Die.
       this.LetPlayersDie(game);
       //Filter again afterwards.
-      game.Districts = FilterDistForAlive(game.Districts);
-      game.Rounds[this.roundId].AliveDistricts = game.Districts; 
-    
+      game.Districts = FilterDistForAlive(
+        game.Rounds[game.roundId].DiedInROund,
+        game.Districts
+      );
+
+      // console.log(`Number of Player alive ${game.playersAlive}`);
+
+      game.Rounds[this.roundId].AliveDistricts = game.Districts;
+
       game.roundId++;
     } else {
       this.playing = false;
+
       console.log("🎮 Game Ended !!!!");
       for (let I = 0; I < game.Districts.length; I++) {
         const element = game.Districts[I];
@@ -117,25 +146,27 @@ export class GameClass implements Game {
     //Gets the Converted Picture buffers
     const dieBuffer = await GetPictureBuffer(dieHTML);
     const dieMessage = CreateDieMessage(dieBuffer, id);
-    //Sends the Feedback to the Server.
-    SendMessage(
-      channel,
-      "----------------------------------------------------"
-    );
-    SendMessage(channel, dieMessage);
 
-    //Gets the Strings that need to be converted.
-    const str = CreateGameHtml(livingDistrict);
-    //Gets the Converted Picture buffers
-    const buffers = await GetPictureBuffer(str);
-    const message = CreateRoundMessage(buffers, id);
-    //Sends the Feedback to the Server.
-    SendMessage(
-      channel,
-      "----------------------------------------------------"
-    );
-    // game.Channel.send(CreateDieMessage(index + 1));
-    SendMessage(channel, message);
+    if (
+      dieMessage.embeds.length !== 0 &&
+      dieMessage.files.length !== 0
+    ) {
+      //Sends the Feedback to the Server.
+      SendMessage(channel, dieMessage);
+    }
+
+    // //Gets the Strings that need to be converted.
+    // const str = CreateGameHtml(livingDistrict);
+    // //Gets the Converted Picture buffers
+    // const buffers = await GetPictureBuffer(str);
+    // const message = CreateRoundMessage(buffers, id);
+    // //Sends the Feedback to the Server.
+    // SendMessage(
+    //   channel,
+    //   "----------------------------------------------------"
+    // );
+    // // game.Channel.send(CreateDieMessage(index + 1));
+    // SendMessage(channel, message);
   }
 
   private LetPlayersDie(game: GameClass) {
@@ -149,21 +180,15 @@ export class GameClass implements Game {
             game.Districts[i].Players[j] = player;
             game.playersAlive -= 1;
             const index = this.CheckDistrict(
-              game.Rounds[game.roundId].DistrictAfterRound,
+              game.Rounds[game.roundId].DiedInROund,
               this.Districts[i]
             );
 
-            game.Rounds[game.roundId].DistrictAfterRound[index].Players.push(
-              player
-            );
+            game.Rounds[game.roundId].DiedInROund[index].Players.push(player);
           }
         }
       }
     }
-
-    this.Districts = FilterDistForAlive(game.Districts);
-
-    console.log(`Number of Player alive ${game.playersAlive}`);
   }
 
   private CheckDistrict(targetDistricts: District[], district: District) {
@@ -181,9 +206,9 @@ export class GameClass implements Game {
 
   RoundGenerator() {
     const round: Round = {
-      DistrictBeforeRound: [],
-      DistrictAfterRound: [],
-      AliveDistricts: [], 
+      HadEvent: [],
+      DiedInROund: [],
+      AliveDistricts: [],
       RoundNumber: this.roundId,
     };
 
@@ -194,7 +219,14 @@ export class GameClass implements Game {
 
     for (let i = 0; i < this.Districts.length; i++) {
       for (let j = 0; j < this.Districts[i].Players.length; j++) {
-        const focusedPlayer = this.Districts[i].Players[j];
+        const focusedPlayer: Player = {
+          Events: [],
+          IsAlive: this.Districts[i].Players[j].IsAlive,
+          Name: this.Districts[i].Players[j].Name,
+          Url: this.Districts[i].Players[j].Url,
+          SurvivalRate: this.Districts[i].Players[j].SurvivalRate,
+          User: this.Districts[i].Players[j].User
+        };
 
         //Gets the Event to match to.
         const event = randomEnum(Events);
@@ -210,15 +242,11 @@ export class GameClass implements Game {
               );
 
               //Push to round thing the player with District
-              index = this.CheckDistrict(
-                round.DistrictBeforeRound,
-                this.Districts[i]
-              );
-              round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+              index = this.CheckDistrict(round.DiedInROund, this.Districts[i]);
+              round.DiedInROund[index].Players.push(focusedPlayer);
 
               this.playersAlive -= 1;
               amountDie -= 1;
-              console.log("someone died");
             }
             break;
           case Events.Injury:
@@ -228,12 +256,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
-            console.log(event.toString());
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.LightInjury:
             focusedPlayer.SurvivalRate -= 0.35;
@@ -242,11 +266,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.Misc:
             focusedPlayer.Events.push(
@@ -254,11 +275,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.LightBuff:
             focusedPlayer.SurvivalRate += 0.35;
@@ -267,11 +285,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.Buff:
             focusedPlayer.SurvivalRate += 0.55;
@@ -280,11 +295,8 @@ export class GameClass implements Game {
               EzMapSzenario.get(event)!.GetScenario(focusedPlayer)
             );
             //Push to round thing the player with District
-            index = this.CheckDistrict(
-              round.DistrictBeforeRound,
-              this.Districts[i]
-            );
-            round.DistrictBeforeRound[index].Players.push(focusedPlayer);
+            index = this.CheckDistrict(round.HadEvent, this.Districts[i]);
+            round.HadEvent[index].Players.push(focusedPlayer);
             break;
           case Events.NoEvent:
           //break to default no event
@@ -303,7 +315,14 @@ export class GameClass implements Game {
   }
 
   private async GameMessagesHandler(game: GameClass) {
-    for (let index = 0; index < game.Rounds.length; index++) {
+    for (let index = 1; index < game.Rounds.length; index++) {
+
+     await SendMessage(
+        this.Channel,
+        "----------------------------------------------------" +
+          "\r\nNew Round\r\n" +
+          "----------------------------------------------------"
+      );
       //picture event
       const htmlRound = CreateRoundHtml(game.Rounds[index]);
 
@@ -313,8 +332,12 @@ export class GameClass implements Game {
           element
         )) as Buffer;
         const roundMessage = CreateRoundMessage([roundBuffers], index);
-        SendMessage(game.Channel, roundMessage);
-     
+        if (
+          roundMessage.embeds.length !== 0 &&
+          roundMessage.files.length !== 0 
+        ) {
+          SendMessage(game.Channel, roundMessage);
+        }
         console.log("Sended something ");
         await delay(game.delay);
       }
@@ -326,19 +349,23 @@ export class GameClass implements Game {
         game.Rounds[index].AliveDistricts,
         index
       );
-      
+
       console.log("Sended something ");
       await delay(game.delay);
     }
+    try {
 
     const winnerHtml = CreateWinnerHTML(game.Districts[0].Players[0]);
     const buffer = await GetPictureBufferSingle(winnerHtml);
 
-    const message = CreateEndMessage(buffer);
-    SendMessage(game.Channel, message);
-
-    console.log("Sended something ");
-    await delay(game.delay);
+      const message = CreateEndMessage(buffer, game.Districts[0].Players[0].User);
+      SendMessage(game.Channel, message);
+    } catch (error) {
+      //Only log error
+      console.log(error);
+    }
+      console.log("Sended something ");
+    console.log("Ended Sending");
   }
 }
 

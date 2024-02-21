@@ -1,8 +1,6 @@
 import { District } from "../../types/District";
-import { Game } from "../../types/Game";
 import { NewIntervalMap } from "../intervalMap";
 import fs from "fs";
-import { FilterDistForDead } from "../helpFunctions";
 import { Player } from "../../types/Player";
 import { Round } from "../../types/Round";
 
@@ -15,7 +13,7 @@ export function CreateHtmlDistrict(district: District): string {
   for (let i = 0; i < district.Players.length; i++) {
     str += ` <div>
     <h2>${district.Players[i].Name}</h2>
-    <div class="${district.Players[i].IsAlive !== true ? "dead-player" : ""}">
+    <div class="${district.Players[i].IsAlive ? "":  "dead-player"}">
     <img  src="${district.Players[i].Url}" alt="${district.Players[i].Url}">
     </div>
   </div>`;
@@ -61,14 +59,12 @@ export function CreateGameHtml(game: District[]): string[] {
   return htmlStrings;
 }
 
-const DieTitel = "<h1>🤓--Following Players Died, R.I.P. Bozos--🤓</h1>";
+const DieTitel = "<h1>🤓--R.I.P. Bozos--🤓</h1>";
 export function CreateDieHTML(game: Round): string[] {
   //Create the HTML for the Dead Players.
   const htmlStrings: string[] = [];
 
-  const listOfDist: District[] = FilterDistForDead(
-    game.DistrictAfterRound
-  );
+  const listOfDist: District[] = game.DiedInROund; 
 
   if (listOfDist.length > 0 && listOfDist[0].Players.length > 0) {
     const amountOfPlayer = listOfDist[0].Players.length;
@@ -123,26 +119,26 @@ export function CreateRoundHtml(game: Round): string[] {
   //Creates an Empty Array to fill with the Strings representing the HTMLs.
   const htmlStrings: string[] = [];
 
-  if (game.DistrictBeforeRound.length > 0) {
+  if (game.HadEvent.length > 0) {
     const maxPlayer = 3;
 
     let districtHelper = "";
     let x = 0;
 
-    for (let i = 0; i < game.DistrictBeforeRound.length; i++) {
+    for (let i = 0; i < game.HadEvent.length; i++) {
       for (
         let j = 0;
-        j < game.DistrictBeforeRound[i].Players.length;
+        j < game.HadEvent[i].Players.length;
         j++
       ) {
-        const element = game.DistrictBeforeRound[i].Players[j];
+        const element = game.HadEvent[i].Players[j];
 
-        districtHelper += CreatePlayerHTML(element);
+        districtHelper += CreatePlayerRoundHTML(element);
         x++;
 
         if (
           x >= maxPlayer ||
-          i + 1 >= game.DistrictBeforeRound.length
+          i + 1 >= game.HadEvent.length
         ) {
           const result = `<div>  <div class="picture-containerRound"> ${districtHelper}  </div> </div>`;
           const str = template.replace("{0}", result);
@@ -156,11 +152,25 @@ export function CreateRoundHtml(game: Round): string[] {
   return htmlStrings;
 }
 
+function CreatePlayerRoundHTML(player: Player): string {
+  const result = ` <div class = "DistContainer">
+      <div class="">
+          <img src="${player.Url}"
+              alt="${player.Name} Profile Picture">
+      </div>
+      <p>
+        ${player.Events[player.Events.length - 1]} 
+      </p>
+  </div> `;
+
+  return result;
+}
+
 function CreatePlayerHTML(player: Player, isWinner = false): string {
   const result = ` <div class = "DistContainer">
    <h2>${player.Name}</h2>
       <div class="">
-          <img ${!isWinner ? "" : 'class="winner-pic"'} src="${player.Url}"
+          <img ${!isWinner ? "" : "class=\"winner-pic\""} src="${player.Url}"
               alt="${player.Name} Profile Picture">
       </div>
       <p>

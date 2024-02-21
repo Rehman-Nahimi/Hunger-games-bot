@@ -9,7 +9,7 @@ export function CreateRoundMessage(buffers: Buffer[], roundNumber: number) {
 
   //Create the Result Object.
   const result = {
-    content: "Game Image",
+    content: "",
     embeds: myAttachments[0],
     files: myAttachments[1],
   };
@@ -26,7 +26,7 @@ export function CreateDieMessage(buffers: Buffer[], roundNumber: number) {
 
   //Create the Result Object.
   const result = {
-    content: "Die Images",
+    content: "",
     embeds: myAttachments[0],
     files: myAttachments[1],
   };
@@ -34,19 +34,19 @@ export function CreateDieMessage(buffers: Buffer[], roundNumber: number) {
   return result;
 }
 
-export  function CreateEndMessage(buffer : Buffer) {
+export function CreateEndMessage(buffer: Buffer, userId: string) {
   const buffers: Buffer[] = [];
   buffers.push(buffer);
 
   const myAttachments = CreateMessageAttachments(
     buffers,
-    "The WINNER",
+    "The Winner",
     0x1abc9c
   );
 
   //Create the Result Object.
   const result = {
-    content: "The Winner",
+    content: `The Winner is ${userId}, congratulations.`,
     embeds: myAttachments[0],
     files: myAttachments[1],
   };
@@ -88,4 +88,3 @@ function CreateMessageAttachments(
 
   return [exampleEmbeds, myAttachments];
 }
-

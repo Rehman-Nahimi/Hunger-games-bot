@@ -2,12 +2,12 @@
 /* ------------------------------------------------------- */
 body {
   background-color: rgb(255, 230, 208);
+  text-align: center;
 }
 
 /* Style for the Player Boxes  */
 /* ------------------------------------------------------- */
 div {
-  text-align: center;
   margin: 10px;
 }
 
